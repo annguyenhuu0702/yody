@@ -1,0 +1,30 @@
+const Gender_Category_Router = require("./Gender_Category_Router");
+const Group_Category_Router = require("./Group_Category_Router");
+const Category_Router = require("./Category_Router");
+const Product_Router = require("./Product_Router");
+const Auth_Router = require("./Auth_Router");
+const Comment_Router = require("./Comment_Router");
+const Product_Color_Router = require("./Product_Color_Router");
+const Product_Color_Image_Router = require("./Product_Color_Image_Router");
+const Product_Color_Size_Router = require("./Product_Color_Size_Router");
+const Cart_Item_Router = require("./Cart_Item_Router");
+
+const configRoute = (app) => {
+  app.use("/v1/gender-category", Gender_Category_Router);
+  app.use("/v1/auth", Auth_Router);
+  // app.use("/v1/user", userRouter);
+  app.use("/v1/group-category", Group_Category_Router);
+  app.use("/v1/category", Category_Router);
+  app.use("/v1/product-color", Product_Color_Router);
+  app.use("/v1/product-color-image", Product_Color_Image_Router);
+  app.use("/v1/product-color-size", Product_Color_Size_Router);
+  // app.use("/v1/images-product", imagesProductRouter);
+  app.use("/v1/product", Product_Router);
+  // app.use("/v1/file", fileRouter);
+  app.use("/v1/cart", Cart_Item_Router);
+  // app.use("/v1/wishlist", wishlistRouter);
+  app.use("/v1/comment", Comment_Router);
+  // app.use("/v1/collection-product", collectionProductRouter);
+  // app.use("/v1/order", orderRouter);
+};
+module.exports = configRoute;
