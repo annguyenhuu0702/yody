@@ -1,0 +1,237 @@
+@import "../../styles//variable";
+@import "../../styles//base";
+
+.product-category {
+  margin: 40px 0;
+
+  .col-lg-3 {
+    padding-left: 0;
+    .filter {
+      padding-top: 40px;
+
+      .filtered {
+        margin-bottom: 20px;
+        .filtered-header {
+          display: flex;
+          justify-content: space-between;
+          font-size: 1.6rem;
+          color: $black;
+          font-weight: 500;
+          margin-bottom: 10px;
+
+          .clear-all {
+            cursor: pointer;
+
+            &:hover {
+              color: $yellow;
+            }
+          }
+        }
+
+        .filtered-container {
+          display: flex;
+          flex-wrap: wrap;
+          span {
+            font-size: 1.4rem;
+            color: white;
+            padding: 4px 12px;
+            border: 1px solid transparent;
+            background: $yellow;
+            border-radius: 3px;
+            margin: 0 8px 6px 0;
+            cursor: pointer;
+          }
+        }
+      }
+
+      .title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        i {
+          font-size: 1.6rem;
+        }
+      }
+
+      .list-item {
+        list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        padding-left: 0;
+        max-height: 300px;
+        overflow-y: auto;
+
+        .filter-item {
+          border-radius: 3px;
+          display: flex;
+          align-items: center;
+          padding: 10px 16px;
+          margin: 6px 6px 6px 0;
+          background: #f2f2f2;
+          cursor: pointer;
+          border: 1px solid transparent;
+
+          span {
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+            i {
+              display: block;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              margin-right: 10px;
+            }
+          }
+        }
+      }
+
+      .visible {
+        display: block;
+        text-align: center;
+        padding: 10px 0;
+        font-size: 1.6rem;
+        color: $yellow;
+        cursor: pointer;
+      }
+
+      .color,
+      .size,
+      .price {
+        .hidden {
+          display: none;
+        }
+      }
+    }
+
+    .filter-price {
+      .price {
+        .filter-item {
+          border: none;
+          margin: 6px 0 6px 0;
+          padding: 0;
+          background: transparent;
+
+          span {
+            font-size: 1.6rem;
+            margin-left: 6px;
+          }
+        }
+      }
+    }
+
+    .filter-size {
+      .filter-item {
+        &:hover {
+          border: 1px solid $yellow;
+        }
+      }
+    }
+
+    .filter-price {
+      .filter-item {
+        &:hover {
+          color: $yellow;
+        }
+      }
+    }
+
+    .filter-color,
+    .filter-size,
+    .filter-size {
+      margin-bottom: 20px;
+    }
+  }
+
+  .col-lg-9 {
+    .section-sort {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .count {
+        margin-left: -5px;
+        color: $black;
+        font-size: 1.6rem;
+      }
+
+      .sort {
+        padding-right: 10px;
+        position: relative;
+
+        &:hover .list-sort {
+          display: block;
+        }
+
+        .hover-sort {
+          white-space: nowrap;
+          font-size: 1.6rem;
+          display: flex;
+          align-items: center;
+
+          span {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 230px;
+            margin-left: 35px;
+            padding: 10px;
+            border: 1px solid #f2f2f2;
+            position: relative;
+
+            i {
+              margin-left: 100px;
+            }
+          }
+        }
+
+        .list-sort {
+          display: none;
+          list-style: none;
+          position: absolute;
+          top: calc(100% - 6px);
+          right: 9px;
+          width: 230px;
+          z-index: 9999;
+          background: #fff;
+          border: 1px #dde1ef solid;
+          padding: 10px !important;
+
+          li {
+            cursor: pointer;
+            font-size: 1.4rem;
+            margin: 12px 0;
+            &:hover {
+              color: $yellow;
+            }
+            span {
+              display: flex;
+              justify-content: space-between;
+            }
+          }
+        }
+
+        .form-group {
+          display: flex;
+          align-items: center;
+        }
+
+        .form-control-sort {
+          padding: 0 40px;
+          font-size: 1.6rem;
+        }
+      }
+    }
+  }
+}
+
+.product-category {
+  .container {
+    .col-lg-9 {
+      .col-lg-3 {
+        max-width: 25% !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+@import "../../styles//variable";
+.list-cake {
+  .col-lg-3 {
+    max-width: 20%;
+    .list-cake-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 26px 0;
+      border: 1px solid #e1e4f1;
+      margin-bottom: 10px;
+      cursor: pointer;
+      text-transform: capitalize;
+
+      &:hover {
+        text-decoration: none;
+      }
+
+      img {
+        width: 62px;
+      }
+
+      span {
+        font-size: 1.6rem;
+        color: $black;
+        font-weight: 500;
+        margin-left: 10px;
+      }
+    }
+  }
+}

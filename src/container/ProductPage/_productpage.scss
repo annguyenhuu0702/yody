@@ -1,0 +1,30 @@
+@import "../../styles//variable";
+
+.product-page {
+  margin-top: 10px;
+  .sec-services {
+    margin: 0;
+    padding: 26px 0;
+    background: #f8f8f8;
+  }
+
+  .container {
+    padding-left: 0 !important;
+    .title-block {
+      margin: 36px 0;
+      h3 {
+        text-align: center;
+        color: $yellow;
+      }
+    }
+
+    .banner {
+      display: flex;
+      margin-bottom: 70px;
+
+      .col-lg-6 {
+        padding: 0 !important;
+      }
+    }
+  }
+}
