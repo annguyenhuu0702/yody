@@ -6,8 +6,9 @@ const common_include = {
   include: [
     {
       model: db.Product,
+      as: "product",
     },
-    { model: db.User },
+    { model: db.User, as: "user" },
   ],
 };
 

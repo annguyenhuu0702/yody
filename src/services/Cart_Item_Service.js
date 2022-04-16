@@ -4,22 +4,30 @@ const common_include = {
   raw: false,
   nest: true,
   include: [
-    { model: db.User },
+    { model: db.User, as: "user" },
     {
       model: db.Product_Color_Size,
+      as: "product_color_size",
+
       include: [
         {
           model: db.Product_Color,
+          as: "product_color",
           include: [
             {
               model: db.Product,
+              as: "product",
               inClude: [
                 {
                   model: db.Category,
+                  as: "category",
                   include: [
                     {
                       model: db.Group_Category,
-                      inClude: [{ model: db.Gender_Category }],
+                      as: "group_category",
+                      inClude: [
+                        { model: db.Gender_Category, as: "gender_category" },
+                      ],
                     },
                   ],
                 },
@@ -27,6 +35,7 @@ const common_include = {
             },
             {
               model: db.Product_Color_Image,
+              as: "product_color_images",
             },
           ],
         },

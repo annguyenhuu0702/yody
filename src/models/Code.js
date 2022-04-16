@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Code.hasMany(models.Order, {
         foreignKey: "code_id",
+        as: "orders",
       });
     }
   }

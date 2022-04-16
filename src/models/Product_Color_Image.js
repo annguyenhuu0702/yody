@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Product_Color_Image.belongsTo(models.Product_Color, {
         foreignKey: "product_color_id",
+        as: "product_color",
       });
     }
   }

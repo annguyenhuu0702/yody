@@ -63,7 +63,6 @@ const register = async (body) => {
       raw: true,
     });
     if (checkedUser) {
-      console.log("ngu");
       return { status: 500, data: "Email was available" };
     }
     // Hash password
@@ -228,8 +227,8 @@ const createRefreshToken = (obj, res) => {
   // Set refresh token to cookie
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: false,
+    sameSite: "strict",
     path: "/",
   });
 };

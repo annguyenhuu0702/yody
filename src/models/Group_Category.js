@@ -11,9 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Group_Category.hasMany(models.Category, {
         foreignKey: "group_category_id",
+        as: "categories",
       });
       Group_Category.belongsTo(models.Gender_Category, {
         foreignKey: "gender_category_id",
+        as: "gender_category",
       });
     }
   }

@@ -6,18 +6,22 @@ const common_include = {
   include: [
     {
       model: db.Group_Category,
+      as: "group_categories",
       include: [
         {
           model: db.Category,
+          as: "categories",
           include: [
             {
               model: db.Group_Category,
-              include: [{ model: db.Gender_Category }],
+              as: "group_category",
+              include: [{ model: db.Gender_Category, as: "gender_category" }],
             },
           ],
         },
         {
           model: db.Gender_Category,
+          as: "gender_category",
         },
       ],
     },

@@ -11,9 +11,11 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Cart_Item.belongsTo(models.User, {
         foreignKey: "user_id",
+        as: "user",
       });
       Cart_Item.belongsTo(models.Product_Color_Size, {
         foreignKey: "product_color_size_id",
+        as: "product_color_size",
       });
     }
   }

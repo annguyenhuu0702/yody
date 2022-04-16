@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Gender_Category.hasMany(models.Group_Category, {
         foreignKey: "gender_category_id",
+        as: "group_categories",
       });
     }
   }

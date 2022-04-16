@@ -6,7 +6,11 @@ const common_include = {
   include: [
     {
       model: db.Product_Color,
-      include: [{ model: db.Product }, { model: db.Product_Color_Image }],
+      as: "product_color",
+      include: [
+        { model: db.Product, as: "product" },
+        { model: db.Product_Color_Image, as: "product_color_images" },
+      ],
     },
   ],
 };

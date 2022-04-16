@@ -5,9 +5,11 @@ const common_include = {
   include: [
     {
       model: db.Category,
+      as: "categories",
     },
     {
       model: db.Gender_Category,
+      as: "gender_category",
     },
   ],
   nest: true,

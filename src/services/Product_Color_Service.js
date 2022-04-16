@@ -3,9 +3,9 @@ const common_include = {
   raw: false,
   nest: true,
   include: [
-    { model: db.Product },
-    { model: db.Product_Color_Size },
-    { model: db.Product_Color_Image },
+    { model: db.Product, as: "product" },
+    { model: db.Product_Color_Size, as: "product_color_sizes" },
+    { model: db.Product_Color_Image, as: "product_color_images" },
   ],
 };
 const create = async (body) => {
