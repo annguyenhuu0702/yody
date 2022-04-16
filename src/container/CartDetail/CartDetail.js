@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import "./_cartdetail.scss";
 import { castToVND } from "../../Common/index";
-import { URL } from "../../constants/index";
 import { apiDeleteCart, apiUpdateCart } from "../../api/apiCart";
 
 const CartDetail = () => {
@@ -14,15 +13,17 @@ const CartDetail = () => {
   const totalPrice = () => {
     let total = 0;
     for (let i = 0; i < carts.length; i++) {
-      total += carts[i].product.newPrice * carts[i].quantity;
+      total +=
+        carts[i].product_color_size.product_color.product.price *
+        carts[i].quantity;
     }
     return total;
   };
 
   const updateCart = (newQuantity, item) => {
-    if (newQuantity > -1 && newQuantity <= item.size.amount) {
+    if (newQuantity > -1 && newQuantity <= item.product_color_size.amount) {
       apiUpdateCart(user, dispatch, {
-        sizeId: item.sizeId,
+        product_color_size_id: item.product_color_size_id,
         quantity: newQuantity,
       });
     }
@@ -59,22 +60,26 @@ const CartDetail = () => {
                 return (
                   <div className="cart-item" key={item.id}>
                     <div className="info-left">
-                      <Link to={`/${item.product.slug}`} className="item-img">
+                      <Link
+                        to={`/${item.product_color_size.product_color.product.slug}`}
+                        className="item-img"
+                      >
                         <img
-                          src={`${URL}${item.product.images[0].image}`}
+                          src={`${item.product_color_size.product_color.product_color_images[0].url}`}
                           alt=" "
                         />
                       </Link>
                       <div className="product-wrap-name">
                         <div className="wrap-name-color">
                           <Link
-                            to={`/${item.product.slug}`}
+                            to={`/${item.product_color_size.product_color.product.slug}`}
                             className="info-name"
                           >
-                            {item.product.name}
+                            {item.product_color_size.product_color.product.name}
                           </Link>
                           <span className="info-color-size">
-                            {item.product.color} / {item.size.size}
+                            {item.product_color_size.product_color.color} /{" "}
+                            {item.product_color_size.size_text}
                           </span>
                         </div>
                         <div className="remove-cart">
@@ -91,7 +96,9 @@ const CartDetail = () => {
                       </div>
                     </div>
                     <div className="info-right cart-price">
-                      {castToVND(item.product.newPrice)}
+                      {castToVND(
+                        item.product_color_size.product_color.product.price
+                      )}
                     </div>
                     <div className="info-right cart-qtt">
                       <div className="quantity">
@@ -123,7 +130,10 @@ const CartDetail = () => {
                       </div>
                     </div>
                     <div className="info-right cart-total-price">
-                      {castToVND(item.quantity * item.product.newPrice)}
+                      {castToVND(
+                        item.product_color_size.product_color.product.price *
+                          item.quantity
+                      )}
                     </div>
                   </div>
                 );

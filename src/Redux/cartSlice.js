@@ -1,39 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const checkCart = JSON.parse(localStorage.getItem("mickey:carts"));
+
 const cartSlice = createSlice({
   name: "cart",
   initialState: {
-    carts: [],
+    carts: checkCart ? checkCart : [],
     message: "",
   },
   reducers: {
     addToCart: (state, action) => {
       const cartItem = action.payload;
       const newCarts = [...state.carts];
-      const index = newCarts.findIndex(
-        (item) => item.id + "" === cartItem.id + ""
-      );
+      const index = newCarts.findIndex((item) => item.id === cartItem.id);
       if (index === -1) {
         newCarts.push(cartItem);
       } else {
         newCarts[index].quantity = cartItem.quantity;
       }
       state.carts = newCarts;
-    },
-
-    showMessage: (state, action) => {
-      state.message = action.payload;
-    },
-
-    getCartByUser: (state, action) => {
-      state.carts = action.payload;
+      localStorage.setItem("mickey:carts", JSON.stringify(state.carts));
     },
 
     updateCart: (state, action) => {
       const cartItem = action.payload;
       const index = state.carts.findIndex(
         (item) =>
-          item.sizeId === cartItem.sizeId && item.userId === cartItem.userId
+          item.product_color_size_id === cartItem.product_color_size_id &&
+          item.user_id === cartItem.userId
       );
       if (index !== -1) {
         if (cartItem.quantity === 0) {
@@ -42,11 +36,20 @@ const cartSlice = createSlice({
           state.carts[index].quantity = cartItem.quantity;
         }
       }
+      localStorage.setItem("mickey:carts", JSON.stringify(state.carts));
     },
 
     deleteCart: (state, action) => {
       const id = action.payload;
       state.carts = state.carts.filter((item) => item.id !== id);
+    },
+
+    showMessage: (state, action) => {
+      state.message = action.payload;
+    },
+
+    getCartByUser: (state, action) => {
+      state.carts = action.payload;
     },
   },
 });

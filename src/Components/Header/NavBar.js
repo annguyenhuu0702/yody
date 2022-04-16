@@ -1,18 +1,15 @@
 import React, { useEffect } from "react";
-import "./_navbar.scss";
-import { Link } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import { logOut } from "../../api/apiAuth";
-import { apiGetAllBuyerType } from "../../api/apiBuyerType";
-import { URL } from "../../constants";
-import { castToVND } from "../../Common";
 import {
   apiDeleteCart,
   apiGetCartByUser,
   apiUpdateCart,
 } from "../../api/apiCart";
 import { apiGetAllGenderCategory } from "../../api/apiGenderCategory";
+import { castToVND } from "../../Common";
+import "./_navbar.scss";
 
 const NavBar = () => {
   const category = [
@@ -23,7 +20,9 @@ const NavBar = () => {
   ];
 
   const user = useSelector((state) => state.auth.login?.currentUser);
-  const buyerType = useSelector((state) => state.buyertype.buyertypes);
+  const genderCategory = useSelector(
+    (state) => state.genderCategory.genderCategory
+  );
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -33,20 +32,25 @@ const NavBar = () => {
   };
 
   useEffect(() => {
-    // apiGetAllBuyerType(dispatch);
+    // apigetAllGenderCategory(dispatch);
     apiGetAllGenderCategory(dispatch);
   }, [dispatch]);
 
   useEffect(() => {
-    apiGetCartByUser(user, dispatch);
+    if (user) {
+      apiGetCartByUser(user, dispatch);
+    }
   }, [dispatch, user]);
 
   const carts = useSelector((state) => state.cart.carts);
+  console.log(carts);
 
   const subTotal = () => {
     let total = 0;
     for (let i = 0; i < carts.length; i++) {
-      total += carts[i].product.newPrice * carts[i].quantity;
+      total +=
+        carts[i].product_color_size.product_color.product.price *
+        carts[i].quantity;
     }
     return total;
   };
@@ -56,9 +60,9 @@ const NavBar = () => {
   };
 
   const updateCart = (newQuantity, item) => {
-    if (newQuantity > -1 && newQuantity <= item.size.amount) {
+    if (newQuantity > -1 && newQuantity <= item.product_color_size.amount) {
       apiUpdateCart(user, dispatch, {
-        sizeId: item.sizeId,
+        product_color_size_id: item.product_color_size_id,
         quantity: newQuantity,
       });
     }
@@ -74,7 +78,7 @@ const NavBar = () => {
       </Link>
       <div className="header-nav">
         <ul className="header-menu">
-          {buyerType.map((item) => {
+          {genderCategory.map((item) => {
             return (
               <li className="category" key={item.slug}>
                 <Link className="nav-name" to={`/${item.slug}`}>
@@ -82,7 +86,7 @@ const NavBar = () => {
                 </Link>
                 <div className="list-category">
                   <div className="wrap-item d-flex">
-                    {item.Group_Categories.map((group) => {
+                    {item.group_categories.map((group) => {
                       return (
                         <div
                           className="category-item col-lg-2"
@@ -92,7 +96,7 @@ const NavBar = () => {
                             {group.short_name}
                           </Link>
                           <div className="item">
-                            {group.Categories.map((category) => {
+                            {group.categories.map((category) => {
                               return (
                                 <Link
                                   to={`/${category.slug}`}
@@ -142,7 +146,7 @@ const NavBar = () => {
           {user ? (
             <ul className="header-account">
               <li>
-                <p>Hi, {`${user.firstName}`}</p>
+                <p>Hi, {`${user.first_name}`}</p>
                 <Link
                   to="/account/login"
                   className="logout"
@@ -192,17 +196,22 @@ const NavBar = () => {
                     return (
                       <div className="cart-main" key={item.id}>
                         <div className="img">
-                          <Link to={`/${item.product.slug}`}>
+                          <Link to={`/${item.slug}`}>
                             <img
-                              src={`${URL}${item.product.images[0].image}`}
+                              src={`${item.product_color_size.product_color.product_color_images[0].url}`}
                               alt=""
                             />
                           </Link>
                         </div>
                         <div className="cart-info">
                           <div className="info name">
-                            <Link to={`/${item.product.slug}`}>
-                              {item.product.name}
+                            <Link
+                              to={`/${item.product_color_size.product_color.product.slug}`}
+                            >
+                              {
+                                item.product_color_size.product_color.product
+                                  .name
+                              }
                             </Link>
                             <i
                               className="fa-solid fa-trash-can"
@@ -212,10 +221,14 @@ const NavBar = () => {
                             ></i>
                           </div>
                           <span className="info price">
-                            {castToVND(item.product.newPrice)}
+                            {castToVND(
+                              item.product_color_size.product_color.product
+                                .price
+                            )}
                           </span>
                           <span className="info color-size">
-                            {item.product.color} / {item.size.size}
+                            {item.product_color_size.product_color.color} /{" "}
+                            {item.product_color_size.size_text}
                           </span>
                           <div className="info qtt">
                             <div className="cart-qtt">
@@ -249,7 +262,8 @@ const NavBar = () => {
                               <span>Tổng cộng</span>
                               <span>
                                 {castToVND(
-                                  item.product.newPrice * item.quantity
+                                  item.product_color_size.product_color.product
+                                    .price * item.quantity
                                 )}
                               </span>
                             </div>

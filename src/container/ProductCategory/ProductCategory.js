@@ -10,6 +10,7 @@ import { sortProduct } from "../../Redux/productSlide";
 import "./_productcategory.scss";
 
 const ProductCategory = ({ groupCategory, category }) => {
+  console.log(groupCategory, category);
   const [sort, setSort] = useState("Mặc định");
 
   const [toogle, setToogle] = useState({
@@ -202,13 +203,9 @@ const ProductCategory = ({ groupCategory, category }) => {
 
   return (
     <>
-      {/* <ChangePageTitle
-        pageTitle={
-          groupCategory
-            ? groupCategory.name.toUpperCase()
-            : category.name.toUpperCase()
-        }
-      /> */}
+      <ChangePageTitle
+        pageTitle={groupCategory ? groupCategory.full_name : category.full_name}
+      />
       <div className="product-category">
         <div className="container">
           <div className="row">

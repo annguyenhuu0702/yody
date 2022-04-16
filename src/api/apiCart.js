@@ -21,17 +21,6 @@ export const apiAddToCart = async (user, dispatch, data) => {
   }
 };
 
-export const apiGetCartByUser = async (user, dispatch) => {
-  try {
-    const res = await configAxios(user, dispatch).get(
-      `${URL}/v1/cart/userId/${user.id}`
-    );
-    dispatch(getCartByUser(res.data));
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const apiUpdateCart = async (user, dispatch, data) => {
   try {
     await configAxios(user, dispatch).put(`${URL}/v1/cart`, data);
@@ -45,6 +34,17 @@ export const apiDeleteCart = async (user, dispatch, id) => {
   try {
     await configAxios(user, dispatch).delete(`${URL}/v1/cart/${id}`);
     dispatch(deleteCart(id));
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const apiGetCartByUser = async (user, dispatch) => {
+  try {
+    const res = await configAxios(user, dispatch).get(
+      `${URL}/v1/cart/user/${user.id}`
+    );
+    dispatch(getCartByUser(res.data));
   } catch (err) {
     console.log(err);
   }

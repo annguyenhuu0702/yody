@@ -1,30 +1,30 @@
 import React from "react";
 import "./_listcake.scss";
-import { URL } from "../../constants/index";
 import { Link } from "react-router-dom";
 
 const ListCake = (props) => {
-  const { categories, buyerType } = props;
+  const { genderCategory } = props;
+
+  const showListCake = () => {
+    let arr = [];
+    genderCategory.group_categories.forEach((groupCategory) => {
+      groupCategory.categories.forEach((category) => {
+        arr.push(
+          <div className="col-lg-3" key={category.id}>
+            <Link to={`/${category.slug}`} className="list-cake-item">
+              <img src={`${URL}/${category.icon}`} alt="" />
+              <span>{category.short_name}</span>
+            </Link>
+          </div>
+        );
+      });
+    });
+    return arr;
+  };
   return (
     <div className="list-cake">
       <div className="container">
-        <div className="row">
-          {categories &&
-            categories.length > 0 &&
-            categories.map((item) => {
-              if (item.icon === "") {
-                return "";
-              }
-              return (
-                <div className="col-lg-3" key={item.id}>
-                  <Link to={`/${item.slug}`} className="list-cake-item">
-                    <img src={`${URL}/${item.icon}`} alt="" />
-                    <span>{item.name.split(buyerType.name.toLowerCase())}</span>
-                  </Link>
-                </div>
-              );
-            })}
-        </div>
+        <div className="row">{showListCake()}</div>
       </div>
     </div>
   );

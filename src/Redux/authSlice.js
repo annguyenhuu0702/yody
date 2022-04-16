@@ -4,7 +4,7 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     login: {
-      currentUser: JSON.parse(localStorage.getItem("mickey:user")),
+      currentUser: JSON.parse(localStorage.getItem("my-shop:user")),
       isFetching: false,
       error: false,
       message: "",
@@ -25,7 +25,7 @@ const authSlice = createSlice({
       state.login.error = false;
       state.login.currentUser = action.payload;
       localStorage.setItem(
-        "mickey:user",
+        "my-shop:user",
         JSON.stringify(state.login.currentUser)
       );
     },
@@ -55,7 +55,7 @@ const authSlice = createSlice({
       state.login.error = false;
       state.login.currentUser = null;
       localStorage.setItem(
-        "mickey:user",
+        "my-shop:user",
         JSON.stringify(state.login.currentUser)
       );
     },
@@ -65,7 +65,7 @@ const authSlice = createSlice({
     },
     refreshToken: (state, action) => {
       state.login.currentUser.accessToken = action.payload;
-      localStorage.setItem("mickey:user", JSON.stringify(state.currentUser));
+      localStorage.setItem("my-shop:user", JSON.stringify(state.currentUser));
     },
   },
 });

@@ -8,9 +8,7 @@ import Services from "../../Components/Services/Services";
 import { sortProduct } from "../../Redux/productSlide";
 import "./_productpage.scss";
 
-const ProductPage = ({ buyerType }) => {
-  const [categories, setCategories] = useState([]);
-
+const ProductPage = ({ genderCategory }) => {
   const products = useSelector((state) => state.product.products);
 
   const dispatch = useDispatch();
@@ -18,15 +16,15 @@ const ProductPage = ({ buyerType }) => {
   // lấy sản phẩm theo slug, ví dụ: ao-thun-nam, ao-nam
   useEffect(() => {
     const sortByCategory = async () => {
-      await apiGetAllProductByCategorySlug(dispatch, buyerType.slug);
+      await apiGetAllProductByCategorySlug(dispatch, genderCategory.slug);
       dispatch(sortProduct());
     };
     sortByCategory();
-  }, [dispatch, buyerType.slug]);
+  }, [dispatch, genderCategory.slug]);
 
   return (
     <>
-      {/* <ChangePageTitle pageTitle={buyerType.name.toUpperCase()} /> */}
+      <ChangePageTitle pageTitle={genderCategory.full_name} />
       <div className="product-page">
         <div className="banner-container">
           <img
@@ -40,7 +38,7 @@ const ProductPage = ({ buyerType }) => {
           <div className="title-block">
             <h3>MUA THEO THỂ LOẠI</h3>
           </div>
-          <ListCake categories={categories} buyerType={buyerType} />
+          <ListCake genderCategory={genderCategory} />
         </div>
         <div className="container">
           <div className="title-block">

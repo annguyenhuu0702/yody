@@ -5,7 +5,6 @@ import {
   apiGetAllProductByCategorySlug,
 } from "../../../api/apiProduct";
 import Products from "../../../Components/Products/Products";
-import { sortProduct } from "../../../Redux/productSlide";
 import "./_homeproduct.scss";
 
 const HomeProducts = () => {
@@ -15,12 +14,13 @@ const HomeProducts = () => {
   const dispatch = useDispatch();
 
   const products = useSelector((state) => state.product.products);
-  const buyertypes = useSelector((state) => state.buyertype.buyertypes);
+  const genderCategory = useSelector(
+    (state) => state.genderCategory.genderCategory
+  );
 
   useEffect(() => {
     const sortByCategory = async () => {
       await apiGetAllProduct(dispatch);
-      // dispatch(sortProduct());
     };
     sortByCategory();
   }, [dispatch]);
@@ -41,13 +41,11 @@ const HomeProducts = () => {
 
   const getProductsByBuyertype = async (item, index) => {
     await apiGetAllProductByCategorySlug(dispatch, item.slug);
-    // dispatch(sortProduct());
     setInxCategory(index + 1);
   };
 
   const getAllProduct = async () => {
     await apiGetAllProduct(dispatch);
-    // dispatch(sortProduct());
     setInxCategory(0);
   };
 
@@ -66,7 +64,7 @@ const HomeProducts = () => {
               >
                 Tất cả
               </li>
-              {buyertypes.map((item, index) => {
+              {genderCategory.map((item, index) => {
                 return (
                   <li
                     className={`item ${

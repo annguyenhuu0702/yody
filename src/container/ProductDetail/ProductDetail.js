@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import "./_productdetail.scss";
-import { URL } from "../../constants/index";
-import { castToVND, convertSizeStringToNumber } from "../../Common";
 import { apiAddToCart } from "../../api/apiCart";
-import { useSelector, useDispatch } from "react-redux";
-import ChangePageTitle from "../../Components/ChangePageTitle/ChangePageTitle";
 import { apiProductBySlug } from "../../api/apiProduct";
+import { castToVND } from "../../Common";
+import ChangePageTitle from "../../Components/ChangePageTitle/ChangePageTitle";
 import Services from "../../Components/Services/Services";
+import { showMessage } from "../../Redux/cartSlice";
+import "./_productdetail.scss";
 
 const ProductDetail = () => {
   const [state, setState] = useState({});
@@ -18,6 +18,11 @@ const ProductDetail = () => {
   const [qtt, setQtt] = useState(1);
 
   const [product, setProduct] = useState();
+
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.login.currentUser);
+  const message = useSelector((state) => state.cart.message);
+  const carts = useSelector((state) => state.cart.carts);
 
   const params = useParams();
 
@@ -42,15 +47,57 @@ const ProductDetail = () => {
     };
   }, [params.productDetail]);
 
+  console.log(product);
+  console.log(carts);
+
+  useEffect(() => {
+    // tìm sizeID trong giỏ hàng
+    // số lượng hiện: nếu có thì lấy số lượng giỏ hàng còn không thì cho bằng 0
+    // so sánh số luong hiện tại với giỏ hàng ===> nếu lớn hơn thì xuất mess không đủ số lượng còn không thì xuất mess ""
+    if (product) {
+      const checkCart = carts.find(
+        (item) =>
+          item.product_color_size_id ===
+          product.product_colors[indexColor].product_color_sizes[indexSize].id
+      );
+      const currentQtt = checkCart ? checkCart.quantity : 0;
+      if (
+        product &&
+        qtt + currentQtt ===
+          product.product_colors[indexColor].product_color_sizes[indexSize]
+            .amount +
+            1
+      ) {
+        dispatch(showMessage("Số lượng tồn không đủ!"));
+      } else if (
+        product &&
+        qtt + currentQtt <=
+          product.product_colors[indexColor].product_color_sizes[indexSize]
+            .amount
+      ) {
+        dispatch(showMessage(""));
+      }
+    }
+  }, [carts, dispatch, indexColor, indexSize, product, qtt]);
+
   const handleQtt = () => {};
 
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.login.currentUser);
-  // const message = useSelector((state) => state.cart.message);
-  // const carts = useSelector((state) => state.cart.carts);
-
   const addToCart = (data) => {
-    apiAddToCart(user, dispatch, data);
+    // apiAddToCart(user, dispatch, data);
+    const checkCart = carts.find(
+      (item) =>
+        item.product_color_size_id ===
+        product.product_colors[indexColor].product_color_sizes[indexSize].id
+    );
+    const currentQtt = checkCart ? checkCart.quantity : 0;
+    if (
+      data.quantity + currentQtt <=
+      product.product_colors[indexColor].product_color_sizes[indexSize].amount
+    ) {
+      apiAddToCart(user, dispatch, data);
+    } else {
+      dispatch(showMessage("Số lượng tồn không đủ!"));
+    }
   };
 
   if (!product) return "";
@@ -81,9 +128,9 @@ const ProductDetail = () => {
               <div className="col-lg-7 left">
                 <div className="product-detail-img">
                   <div className="small-wrap">
-                    {product.Product_Colors[
+                    {product.product_colors[
                       indexColor
-                    ].Product_Color_Images.map((item, index) => {
+                    ].product_color_images.map((item, index) => {
                       return (
                         <div
                           key={index}
@@ -103,7 +150,7 @@ const ProductDetail = () => {
                   </div>
                   <div className="large-img">
                     <img
-                      src={`${product.Product_Colors[indexColor].Product_Color_Images[indexImage].url}`}
+                      src={`${product.product_colors[indexColor].product_color_images[indexImage].url}`}
                       alt=""
                     />
                   </div>
@@ -120,11 +167,11 @@ const ProductDetail = () => {
                   <div className="info color">
                     <div className="text-color">
                       <span>
-                        Màu sắc: {product.Product_Colors[indexColor].color}
+                        Màu sắc: {product.product_colors[indexColor].color}
                       </span>
                     </div>
                     <div className="color-img">
-                      {product.Product_Colors?.map((item, index) => {
+                      {product.product_colors?.map((item, index) => {
                         return (
                           <div
                             key={index}
@@ -138,7 +185,7 @@ const ProductDetail = () => {
                             }}
                           >
                             <img
-                              src={`${item.Product_Color_Images[indexImage].url}`}
+                              src={`${item.product_color_images[0].url}`}
                               alt=""
                             />
                           </div>
@@ -146,20 +193,20 @@ const ProductDetail = () => {
                       })}
                     </div>
                   </div>
-                  {product.Product_Colors[indexColor].Product_Color_Sizes
+                  {product.product_colors[indexColor].product_color_sizes
                     .length > 0 ? (
                     <div className="info size">
                       <div className="text-size">
                         Kích thước:{" "}
                         {
-                          product.Product_Colors[indexColor]
-                            .Product_Color_Sizes[indexSize].size_text
+                          product.product_colors[indexColor]
+                            .product_color_sizes[indexSize].size_text
                         }
                       </div>
                       <div className="size-item">
-                        {product.Product_Colors[
+                        {product.product_colors[
                           indexColor
-                        ].Product_Color_Sizes.map((item, index) => {
+                        ].product_color_sizes.map((item, index) => {
                           return (
                             <div
                               className={`item ${
@@ -212,6 +259,7 @@ const ProductDetail = () => {
                       <i className="fa-solid fa-plus"></i>
                     </button>
                   </div>
+                  <p className="qtt-message">{message}</p>
                 </div>
                 <div className="add-to-cart">
                   <button
@@ -219,13 +267,10 @@ const ProductDetail = () => {
                     className="btn-add-cart"
                     onClick={() => {
                       addToCart({
-                        sizeId:
-                          product.Product_Colors[indexColor].sizes[indexSize]
-                            .id,
+                        product_color_size_id:
+                          product.product_colors[indexColor]
+                            .product_color_sizes[indexSize].id,
                         quantity: qtt,
-                        amount:
-                          product.Product_Colors[indexColor].sizes[indexSize]
-                            .amount,
                       });
                     }}
                   >
@@ -237,13 +282,10 @@ const ProductDetail = () => {
                     className="btn-add-cart buy-now"
                     onClick={() => {
                       addToCart({
-                        sizeId:
-                          product.Product_Colors[indexColor].sizes[indexSize]
-                            .id,
+                        product_color_size_id:
+                          product.product_colors[indexColor]
+                            .product_color_sizes[indexSize].id,
                         quantity: qtt,
-                        amount:
-                          product.Product_Colors[indexColor].sizes[indexSize]
-                            .amount,
                       });
                       navigate("/cart");
                     }}

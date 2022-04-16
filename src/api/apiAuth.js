@@ -39,7 +39,13 @@ export const registerUser = async (user, dispatch, navigate) => {
 export const logOut = async (dispatch, navigate) => {
   dispatch(logoutStart());
   try {
-    await axios.post(`${URL}/v1/auth/logout`);
+    await axios.post(
+      `${URL}/v1/auth/logout`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
     dispatch(logoutSuccess());
     navigate("/");
   } catch (err) {
