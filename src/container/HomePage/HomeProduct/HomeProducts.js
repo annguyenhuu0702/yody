@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   apiGetAllProduct,
-  apiGetAllProductByCategorySlug,
+  apiGetAllProductByGenderCategorySlug,
 } from "../../../api/apiProduct";
 import Products from "../../../Components/Products/Products";
 import "./_homeproduct.scss";
@@ -39,9 +39,10 @@ const HomeProducts = () => {
     });
   };
 
-  const getProductsByBuyertype = async (item, index) => {
-    await apiGetAllProductByCategorySlug(dispatch, item.slug);
+  const getProductsByGenderCategory = async (item, index) => {
+    await apiGetAllProductByGenderCategorySlug(dispatch, item.slug);
     setInxCategory(index + 1);
+    console.log(idxCategory);
   };
 
   const getAllProduct = async () => {
@@ -72,7 +73,7 @@ const HomeProducts = () => {
                     }`}
                     key={item.slug}
                     onClick={() => {
-                      getProductsByBuyertype(item, index);
+                      getProductsByGenderCategory(item, index);
                     }}
                   >
                     {item.full_name}

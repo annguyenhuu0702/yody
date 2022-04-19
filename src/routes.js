@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import CartDetail from "./container/CartDetail/CartDetail";
 import HomePage from "./container/HomePage/HomePage";
 import Login from "./container/Login/Login";
+import MyAccount from "./container/MyAccount/MyAccount";
 import ProductCategory from "./container/ProductCategory/ProductCategory";
 import ProductDetail from "./container/ProductDetail/ProductDetail";
 import ProductPage from "./container/ProductPage/ProductPage";
@@ -49,6 +50,7 @@ const PageRoutes = () => {
       <Route path="/" element={<HomePage />} />
       <Route path="/account/login" element={<Login />} />
       <Route path="/account/register" element={<Register />} />
+      <Route path="/account" element={<MyAccount />} />
       <Route path="/:productDetail" element={<ProductDetail />} />
       <Route path="/cart" element={<CartDetail />} />
       {showRouteCategory()}

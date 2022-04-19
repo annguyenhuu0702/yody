@@ -19,6 +19,25 @@ const NavBar = () => {
     { name: "ĐỒNG PHỤC", id: Date.now() + Math.random(), link: "dong-phuc" },
   ];
 
+  const myInfo = [
+    {
+      name: "Tài khoản của tôi",
+      url: "account",
+    },
+    {
+      name: "Đổi mật khẩu",
+      url: "account/changepassword",
+    },
+    {
+      name: "Sổ địa chỉ",
+      url: "account/address",
+    },
+    {
+      name: "Sản phẩm yêu thích",
+      url: "yeu-thich",
+    },
+  ];
+
   const user = useSelector((state) => state.auth.login?.currentUser);
   const genderCategory = useSelector(
     (state) => state.genderCategory.genderCategory
@@ -146,7 +165,17 @@ const NavBar = () => {
           {user ? (
             <ul className="header-account">
               <li>
-                <p>Hi, {`${user.first_name}`}</p>
+                <p>{`${user.first_name + " " + user.last_name}`}</p>
+                {myInfo &&
+                  myInfo.map((item) => {
+                    console.log(item);
+                    return (
+                      <Link to={`/${item.url}`} key={item.name}>
+                        <span className="my-info">{item.name}</span>
+                      </Link>
+                    );
+                  })}
+
                 <Link
                   to="/account/login"
                   className="logout"

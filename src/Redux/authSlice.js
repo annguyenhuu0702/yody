@@ -24,6 +24,7 @@ const authSlice = createSlice({
       state.login.isFetching = false;
       state.login.error = false;
       state.login.currentUser = action.payload;
+      state.login.message = "";
       localStorage.setItem(
         "my-shop:user",
         JSON.stringify(state.login.currentUser)

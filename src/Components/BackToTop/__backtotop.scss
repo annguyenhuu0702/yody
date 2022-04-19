@@ -1,0 +1,22 @@
+@import "../../styles/variable";
+
+.button__scroll {
+  position: fixed;
+  bottom: 100px;
+  right: 50px;
+  height: 45px;
+  width: 45px;
+  border: none;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  font-size: 25px;
+  background: #ee4d2d;
+
+  i {
+    color: $white;
+  }
+
+  &:hover {
+    opacity: 0.7;
+  }
+}

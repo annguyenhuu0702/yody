@@ -11,6 +11,17 @@ export const apiGetAllProduct = async (dispatch) => {
   }
 };
 
+export const apiGetAllProductByGenderCategorySlug = async (dispatch, slug) => {
+  try {
+    const res = await axios.get(
+      `${URL}/v1/product/gender-category-slug/${slug}`
+    );
+    dispatch(getAllProduct(res.data));
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export const apiGetAllProductByCategorySlug = async (dispatch, slug) => {
   try {
     const res = await axios.get(`${URL}/v1/product/category-slug/${slug}`);

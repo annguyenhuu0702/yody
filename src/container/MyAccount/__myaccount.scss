@@ -1,0 +1,101 @@
+@import "../../styles/variable";
+
+.my-account {
+  background: #f8f8f8;
+  .title {
+    .title-wrap {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 0;
+      font-size: 1.4rem;
+
+      .title-top {
+        margin-bottom: 10px;
+        a {
+          color: #000;
+        }
+        .distance {
+          margin: 0 4px;
+        }
+      }
+
+      .title-bottom {
+        span {
+          font-size: 2rem;
+          color: $yellow;
+        }
+      }
+    }
+
+    .title-bottom {
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .account-main {
+    display: flex;
+
+    .main-left {
+      padding: 20px 0 40px 0;
+      background: #fff;
+      height: 630px;
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin: 0 10px 30px;
+
+        .info-user {
+          margin: 6px 0;
+          font-size: 1.4rem;
+          font-weight: 500;
+        }
+
+        .logout {
+          display: block;
+          width: 100%;
+          font-size: 1.4rem;
+          color: #fff;
+          background-color: #fab136;
+          border-radius: 10px;
+        }
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+          display: flex;
+          font-size: 1.4rem;
+          padding: 6px 0;
+          a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            color: #000;
+
+            &:hover {
+              color: #fab136;
+              font-weight: 500;
+            }
+          }
+
+          img {
+            padding: 0 10px 0 20px;
+          }
+
+          &:hover {
+            background: #feeeea;
+          }
+        }
+      }
+    }
+  }
+}
