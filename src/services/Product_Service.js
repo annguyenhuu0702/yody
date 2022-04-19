@@ -119,9 +119,11 @@ const search = async (q) => {
 const getByGenderCategorySlug = async (query, slug) => {
   return new Promise(async (resolve, reject) => {
     try {
-      common_include.include[1].include[0].include[0].where = { slug };
       const products = await db.Product.findAll({
         ...common_include,
+        where: {
+          "$Category.Group_Category.Gender_Category.slug$": slug,
+        },
       });
       resolve({ status: 200, data: products });
     } catch (error) {
@@ -130,6 +132,7 @@ const getByGenderCategorySlug = async (query, slug) => {
     }
   });
 };
+
 const getByGroupCategorySlug = async (query, slug) => {
   return new Promise(async (resolve, reject) => {
     try {

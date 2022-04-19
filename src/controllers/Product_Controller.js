@@ -21,6 +21,7 @@ const Gender_Category_Controller = {
   },
   getByGenderCategorySlug: async (req, res) => {
     const { status, data } = await getByGenderCategorySlug(
+      req.query,
       req.params.gender_category_slug
     );
     res.status(status).json(data);
