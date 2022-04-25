@@ -49,8 +49,8 @@ const register = async (body) => {
     const {
       email,
       password,
-      firstName,
-      lastName,
+      first_name,
+      last_name,
       avatar,
       gender,
       birthday,
@@ -75,9 +75,9 @@ const register = async (body) => {
     await db.User.create({
       id,
       email,
-      hash,
-      firstName,
-      lastName,
+      password: hash,
+      first_name,
+      last_name,
       avatar,
       gender,
       birthday,

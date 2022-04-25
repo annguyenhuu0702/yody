@@ -13,7 +13,6 @@ const authController = {
     res.status(response.status).json(response.data);
   },
   logout: (req, res) => {
-    console.log("Abc");
     res.clearCookie("refreshToken");
     res.status(200).json("Log out successful");
   },
