@@ -8,8 +8,8 @@ import Products from "../../../Components/Products/Products";
 import "./_homeproduct.scss";
 
 const HomeProducts = () => {
-  const [visible, setVisible] = useState(10);
   const [idxCategory, setInxCategory] = useState(0);
+  const [visible, setVisible] = useState(5);
 
   const dispatch = useDispatch();
 
@@ -25,30 +25,36 @@ const HomeProducts = () => {
     sortByCategory();
   }, [dispatch]);
 
-  const showMoreProduct = () => {
-    setVisible((prev) => {
-      if (prev === products.length) {
-        prev = 10;
-      } else {
-        prev = prev + 10;
-        if (prev > products.length) {
-          prev = products.length;
-        }
-      }
-      return prev;
-    });
-  };
-
   const getProductsByGenderCategory = async (item, index) => {
-    await apiGetAllProductByGenderCategorySlug(dispatch, item.slug);
+    await apiGetAllProductByGenderCategorySlug(
+      dispatch,
+      item.slug,
+      `?limit=${visible}`
+    );
     setInxCategory(index + 1);
-    console.log(idxCategory);
+    setVisible(5);
   };
 
   const getAllProduct = async () => {
     await apiGetAllProduct(dispatch);
     setInxCategory(0);
   };
+
+  //load more product theo gendercategory
+  useEffect(() => {
+    const callApi = async () => {
+      if (idxCategory === 0) {
+        //
+      } else {
+        await apiGetAllProductByGenderCategorySlug(
+          dispatch,
+          genderCategory[idxCategory - 1].slug,
+          `?limit=${visible}`
+        );
+      }
+    };
+    callApi();
+  }, [dispatch, genderCategory, idxCategory, visible]);
 
   return (
     <section className="home-product">
@@ -87,13 +93,24 @@ const HomeProducts = () => {
         </div>
       </div>
       <div className="product">
-        <Products products={products} visible={visible} />
+        <Products products={products} />
       </div>
-      <div className="load-more">
-        <button onClick={showMoreProduct}>
-          {visible === products.length ? "Thu gọn" : "Xem thêm"}
-        </button>
-      </div>
+      {products.total_page * products.length !== 5 &&
+        (products.total_page !== 1 ? (
+          <div className="load-more">
+            <button onClick={() => setVisible(visible + 5)}>Xem thêm</button>
+          </div>
+        ) : (
+          <div className="load-more">
+            <button
+              onClick={() => {
+                setVisible(5);
+              }}
+            >
+              Thu gọn
+            </button>
+          </div>
+        ))}
     </section>
   );
 };

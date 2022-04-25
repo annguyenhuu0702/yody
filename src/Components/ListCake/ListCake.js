@@ -9,10 +9,11 @@ const ListCake = (props) => {
     let arr = [];
     genderCategory.group_categories.forEach((groupCategory) => {
       groupCategory.categories.forEach((category) => {
+        console.log(category);
         arr.push(
           <div className="col-lg-3" key={category.id}>
             <Link to={`/${category.slug}`} className="list-cake-item">
-              <img src={`${URL}/${category.icon}`} alt="" />
+              <img src={category.icon} alt="" />
               <span>{category.short_name}</span>
             </Link>
           </div>

@@ -6,13 +6,18 @@ const BackToTop = () => {
   const [btnBackToTop, setBtnBackToTop] = useState(false);
 
   useEffect(() => {
-    window.addEventListener("scroll", () => {
+    const handleScroll = () => {
       if (window.scrollY > 500) {
         setBtnBackToTop(true);
       } else {
         setBtnBackToTop(false);
       }
-    });
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const scrollUp = () => {

@@ -4,12 +4,12 @@ import { Link } from "react-router-dom";
 import { castToVND } from "../../Common";
 
 const Products = (props) => {
-  const { products, visible } = props;
+  const { products } = props;
 
   return (
     <div className="container pl-0">
       <div className="row">
-        {products.slice(0, visible)?.map((item) => {
+        {products?.products?.map((item) => {
           return (
             <div className="col-lg-3 col-md-4 col-6 product-item" key={item.id}>
               <div className="item-img">

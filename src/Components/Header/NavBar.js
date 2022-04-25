@@ -62,7 +62,6 @@ const NavBar = () => {
   }, [dispatch, user]);
 
   const carts = useSelector((state) => state.cart.carts);
-  console.log(carts);
 
   const subTotal = () => {
     let total = 0;
@@ -168,7 +167,6 @@ const NavBar = () => {
                 <p>{`${user.first_name + " " + user.last_name}`}</p>
                 {myInfo &&
                   myInfo.map((item) => {
-                    console.log(item);
                     return (
                       <Link to={`/${item.url}`} key={item.name}>
                         <span className="my-info">{item.name}</span>

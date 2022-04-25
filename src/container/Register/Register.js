@@ -54,7 +54,7 @@ const Register = () => {
                       <Input
                         classStyle="form-control"
                         inputType="text"
-                        name="firstName"
+                        name="first_name"
                         placeholder="Tên"
                         register={register}
                         errors={{ required: true }}
@@ -69,7 +69,7 @@ const Register = () => {
                       <Input
                         classStyle="form-control"
                         inputType="text"
-                        name="lastName"
+                        name="last_name"
                         placeholder="Họ"
                         register={register}
                         errors={{ required: true }}

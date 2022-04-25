@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { apiGetAllProductByCategorySlug } from "../../api/apiProduct";
+import { apiGetAllProductByGenderCategorySlug } from "../../api/apiProduct";
 import ChangePageTitle from "../../Components/ChangePageTitle/ChangePageTitle";
 import ListCake from "../../Components/ListCake/ListCake";
 import Products from "../../Components/Products/Products";
@@ -13,10 +13,9 @@ const ProductPage = ({ genderCategory }) => {
 
   const dispatch = useDispatch();
 
-  // lấy sản phẩm theo slug, ví dụ: ao-thun-nam, ao-nam
   useEffect(() => {
     const sortByCategory = async () => {
-      await apiGetAllProductByCategorySlug(dispatch, genderCategory.slug);
+      await apiGetAllProductByGenderCategorySlug(dispatch, genderCategory.slug);
       dispatch(sortProduct());
     };
     sortByCategory();

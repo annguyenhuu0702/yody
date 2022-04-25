@@ -44,9 +44,9 @@ const CartDetail = () => {
                 <span className="total-cart"> ({carts.length}) sản phẩm</span>
               </div>
               <span className="collection-all">
-                <a href=" ">
+                <Link to={`/collections/all`}>
                   Tiếp tục mua hàng <i className="fa-solid fa-arrow-right"></i>
-                </a>
+                </Link>
               </span>
             </div>
             <div className="cart-info">

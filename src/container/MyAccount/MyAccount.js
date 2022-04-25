@@ -1,7 +1,9 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { logOut } from "../../api/apiAuth";
+import ChangePassword from "../../Components/ChangPassWord/ChangePassword";
+import MyInfo from "../../Components/MyInfo/MyInfo";
 import "./__myaccount.scss";
 
 const MyAccount = () => {
@@ -26,11 +28,6 @@ const MyAccount = () => {
       name: "Sổ địa chỉ",
       url: "address",
       img: "https://bizweb.sapocdn.net/100/438/408/themes/857207/assets/acc_user_4.svg",
-    },
-    {
-      name: "Sản phẩm yêu thích",
-      url: "yeu-thich",
-      img: "https://bizweb.sapocdn.net/100/438/408/themes/857207/assets/acc_user_6.svg",
     },
   ];
 
@@ -90,6 +87,15 @@ const MyAccount = () => {
                       </li>
                     );
                   })}
+                <li>
+                  <Link to="/yeu-thich">
+                    <img
+                      src="https://bizweb.sapocdn.net/100/438/408/themes/857207/assets/acc_user_6.svg"
+                      alt=""
+                    />
+                    Sản phẩm yêu thích
+                  </Link>
+                </li>
               </ul>
             </div>
             <div className="col-lg-9 main-right"></div>

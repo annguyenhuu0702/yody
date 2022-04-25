@@ -53,6 +53,7 @@ const PageRoutes = () => {
       <Route path="/account" element={<MyAccount />} />
       <Route path="/:productDetail" element={<ProductDetail />} />
       <Route path="/cart" element={<CartDetail />} />
+      <Route path="/collections/all" element={<ProductCategory />} />
       {showRouteCategory()}
     </Routes>
   );

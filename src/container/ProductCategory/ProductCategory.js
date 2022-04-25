@@ -10,7 +10,6 @@ import { sortProduct } from "../../Redux/productSlide";
 import "./_productcategory.scss";
 
 const ProductCategory = ({ groupCategory, category }) => {
-  console.log(groupCategory, category);
   const [sort, setSort] = useState("Mặc định");
 
   const [toogle, setToogle] = useState({
@@ -18,6 +17,8 @@ const ProductCategory = ({ groupCategory, category }) => {
     size: false,
     price: false,
   });
+
+  const [currPage, setCurrPage] = useState(1);
 
   const options = [
     "Mặc định",
@@ -57,7 +58,7 @@ const ProductCategory = ({ groupCategory, category }) => {
       colorCode: "#F10008",
     },
     {
-      color: "Xanh",
+      color: "Xanh Blue",
       colorCode: "#6BBBDD",
     },
     {
@@ -118,6 +119,7 @@ const ProductCategory = ({ groupCategory, category }) => {
   const dispatch = useDispatch();
 
   const products = useSelector((state) => state.product?.products);
+  console.log(products);
 
   // áo quần phụ kiện---------áo thun nam, áo polo nam....
   const slug = groupCategory ? groupCategory.slug : category.slug;
@@ -200,6 +202,18 @@ const ProductCategory = ({ groupCategory, category }) => {
     }
     setSelectedFilter({ ...selectedFilter, [key]: result });
   };
+
+  // console.log(totalPage);
+
+  // const showPagination = () => {
+  //   let arr = [];
+  //   if (totalPage) {
+  //     for (let i = 0; i < totalPage; i++) {
+  //       arr.push(<span>{i + 1}</span>);
+  //     }
+  //   }
+  //   return arr;
+  // };
 
   return (
     <>
@@ -429,8 +443,8 @@ const ProductCategory = ({ groupCategory, category }) => {
             <div className="col-lg-9 right">
               <div className="section-sort">
                 <span className="count">
-                  {products.length > 0
-                    ? `${products.length} sản phẩm`
+                  {products?.products?.length > 0
+                    ? `${products?.products?.length} sản phẩm`
                     : "Sản phẩm đang được cập nhật .........."}
                 </span>
                 <div className="sort">
@@ -469,6 +483,36 @@ const ProductCategory = ({ groupCategory, category }) => {
               </div>
               <div className="product">
                 <Products products={products} />
+              </div>
+              <div className="pagination">
+                <nav aria-label="...">
+                  <ul class="pagination">
+                    <li class="page-item disabled">
+                      <span class="page-link">Previous</span>
+                    </li>
+                    <li class="page-item">
+                      <span class="page-link">
+                        1<span class="sr-only">(current)</span>
+                      </span>
+                    </li>
+                    <li class="page-item active">
+                      <span class="page-link ">
+                        {currPage}
+                        <span class="sr-only">(current)</span>
+                      </span>
+                    </li>
+                    <li class="page-item">
+                      <span class="page-link">
+                        3<span class="sr-only">(current)</span>
+                      </span>
+                    </li>
+                    <li class="page-item">
+                      <a class="page-link" href=" ">
+                        Next
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
               </div>
             </div>
           </div>

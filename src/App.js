@@ -4,6 +4,7 @@ import BackToTop from "./Components/BackToTop/BackToTop";
 import Footer from "./Components/Footer/Footer";
 import Header from "./Components/Header/Header";
 import ScrollTop from "./Components/ScrollTop/ScrollTop";
+import ToastMessage from "./Components/ToastMessage/ToastMessage";
 import PageRoutes from "./routes";
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
       {PageRoutes()}
       <Footer />
       <BackToTop />
+      <ToastMessage />
     </BrowserRouter>
   );
 };

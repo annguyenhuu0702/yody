@@ -38,7 +38,6 @@ const ProductDetail = () => {
   useEffect(() => {
     const api = async () => {
       const data = await apiProductBySlug(params.productDetail);
-      console.log(data);
       setProduct(data);
     };
     api();
@@ -48,7 +47,6 @@ const ProductDetail = () => {
   }, [params.productDetail]);
 
   console.log(product);
-  console.log(carts);
 
   useEffect(() => {
     // tìm sizeID trong giỏ hàng
@@ -290,7 +288,7 @@ const ProductDetail = () => {
                       navigate("/cart");
                     }}
                   >
-                    Muan ngay
+                    Mua ngay
                   </button>
                 </div>
                 <>

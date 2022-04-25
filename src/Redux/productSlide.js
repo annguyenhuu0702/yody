@@ -41,17 +41,25 @@ const productSlice = createSlice({
           break;
         case "Giá giảm dần":
           newProduct.sort((a, b) => {
-            return b.newPrice - a.newPrice;
+            return b.price - a.price;
           });
           break;
         case "Giá tăng dần":
           newProduct.sort((a, b) => {
-            return a.newPrice - b.newPrice;
+            return a.price - b.price;
           });
           break;
         case "Mặc định":
           newProduct.sort((a, b) => {
-            return a.newPrice - b.newPrice;
+            const nameA = a.name;
+            const nameB = b.name;
+            if (nameA < nameB) {
+              return -1;
+            }
+            if (nameA > nameB) {
+              return 1;
+            }
+            return 0;
           });
           break;
         default:
