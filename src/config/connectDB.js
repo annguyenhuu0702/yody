@@ -2,7 +2,7 @@ const { Sequelize } = require("@sequelize/core");
 require("dotenv").config();
 
 // Option 3: Passing parameters separately (other dialects)
-const sequelize = new Sequelize("my-shop", "root", null, {
+const sequelize = new Sequelize("yody", "root", null, {
   host: "localhost",
   dialect: "mysql" /* one of 'mysql' | 'mariadb' | 'postgres' | 'mssql' */,
   logging: false,

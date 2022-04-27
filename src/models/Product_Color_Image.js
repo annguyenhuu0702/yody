@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
       },
       url: DataTypes.STRING,
-      is_thumbnail: DataTypes.BOOLEAN,
       product_color_id: DataTypes.INTEGER,
     },
     {
