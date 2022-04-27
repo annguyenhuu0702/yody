@@ -27,4 +27,28 @@
       }
     }
   }
+
+  .container {
+    .load-more {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+
+      button {
+        border: 1px solid #fcaf17;
+        width: 260px;
+        background: #fcaf17;
+        font-size: 1.8rem;
+        padding: 10px 20px;
+        color: $white;
+        position: relative;
+
+        &:hover {
+          background: $white;
+          color: #fcaf17;
+          border: 1px solid #fcaf17;
+        }
+      }
+    }
+  }
 }

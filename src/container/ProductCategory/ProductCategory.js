@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
+  apiGetAllProduct,
   apiGetAllProductByCategorySlug,
   apiGetAllProductByGroupCategorySlug,
 } from "../../api/apiProduct";
@@ -10,7 +12,31 @@ import { sortProduct } from "../../Redux/productSlide";
 import "./_productcategory.scss";
 
 const ProductCategory = ({ groupCategory, category }) => {
+  const [queryParams] = useSearchParams();
+  const p = queryParams.get("p");
+  const [visible, setVisible] = useState(8);
+  const [pagination, setPagination] = useState(4);
   const [sort, setSort] = useState("Mặc định");
+  const [page, setPage] = useState(
+    (() => {
+      try {
+        const _p = parseInt(p);
+        if (isNaN(_p)) {
+          return 1;
+        }
+        if (_p <= 0) {
+          return 1;
+        }
+        return _p;
+      } catch (error) {
+        return 1;
+      }
+    })()
+  );
+
+  const dispatch = useDispatch();
+
+  const products = useSelector((state) => state.product?.products);
 
   const [toogle, setToogle] = useState({
     color: false,
@@ -18,7 +44,7 @@ const ProductCategory = ({ groupCategory, category }) => {
     price: false,
   });
 
-  const [currPage, setCurrPage] = useState(1);
+  const navigate = useNavigate();
 
   const options = [
     "Mặc định",
@@ -116,22 +142,27 @@ const ProductCategory = ({ groupCategory, category }) => {
     },
   ];
 
-  const dispatch = useDispatch();
-
-  const products = useSelector((state) => state.product?.products);
-  console.log(products);
-
   // áo quần phụ kiện---------áo thun nam, áo polo nam....
-  const slug = groupCategory ? groupCategory.slug : category.slug;
+  const slug = groupCategory ? groupCategory?.slug : category?.slug;
 
   // sản phẩm theo category slug, group category slug
   useEffect(() => {
     if (!groupCategory) {
-      apiGetAllProductByCategorySlug(dispatch, slug);
+      apiGetAllProductByCategorySlug(
+        dispatch,
+        slug,
+        `?limit=${pagination}&p=${page}`
+      );
+    } else if (!category) {
+      apiGetAllProductByGroupCategorySlug(
+        dispatch,
+        slug,
+        `?limit=${pagination}&p=${page}`
+      );
     } else {
-      apiGetAllProductByGroupCategorySlug(dispatch, slug);
+      apiGetAllProduct(dispatch);
     }
-  }, [dispatch, groupCategory, slug]);
+  }, [category, dispatch, groupCategory, page, pagination, slug]);
 
   // sort product
   const handleSort = (sort) => {
@@ -140,7 +171,6 @@ const ProductCategory = ({ groupCategory, category }) => {
   };
 
   // loadmore color
-  const [visible, setVisible] = useState(8);
 
   const handleLoadMore = () => {
     setVisible((prev) => {
@@ -203,25 +233,75 @@ const ProductCategory = ({ groupCategory, category }) => {
     setSelectedFilter({ ...selectedFilter, [key]: result });
   };
 
-  // console.log(totalPage);
+  useEffect(() => {
+    let url = "";
+    let urlSearchParams = {};
+    urlSearchParams.p = page;
+    url = new URLSearchParams(urlSearchParams).toString();
+    if (!window.location.href.endsWith(url)) navigate("?" + url);
+  }, [navigate, page]);
 
-  // const showPagination = () => {
-  //   let arr = [];
-  //   if (totalPage) {
-  //     for (let i = 0; i < totalPage; i++) {
-  //       arr.push(<span>{i + 1}</span>);
-  //     }
-  //   }
-  //   return arr;
-  // };
+  const showPagination = () => {
+    let arr = [];
+    for (let i = page; i < page + 3; i++) {
+      if (page + 2 < products.total_page) {
+        arr.push(
+          <li
+            key={Math.random()}
+            className={i === page ? "page-item active" : "page-item"}
+            onClick={() => setPage(i)}
+          >
+            <span className="page-link ">{i}</span>
+          </li>
+        );
+      }
+    }
+    return arr;
+  };
 
   return (
     <>
       <ChangePageTitle
-        pageTitle={groupCategory ? groupCategory.full_name : category.full_name}
+        pageTitle={
+          groupCategory
+            ? groupCategory.full_name
+            : category
+            ? category.full_name
+            : "Tất cả sản phẩm"
+        }
       />
       <div className="product-category">
         <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <ul className="breadcrumb">
+                <li>
+                  <Link to="/">Trang chủ</Link>
+                  <span>/</span>
+                </li>
+                <li>
+                  <Link
+                    to={
+                      groupCategory
+                        ? `/${groupCategory.gender_category.slug}`
+                        : `/${category.group_category.slug}`
+                    }
+                  >
+                    {groupCategory
+                      ? groupCategory.gender_category.short_name
+                      : category.group_category.full_name}
+                  </Link>
+                </li>
+                <li className="last">
+                  <span>
+                    {groupCategory
+                      ? groupCategory.full_name
+                      : category.full_name}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
           <div className="row">
             <div className="col-lg-3 left">
               <div className="filter">
@@ -484,37 +564,38 @@ const ProductCategory = ({ groupCategory, category }) => {
               <div className="product">
                 <Products products={products} />
               </div>
-              <div className="pagination">
-                <nav aria-label="...">
-                  <ul class="pagination">
-                    <li class="page-item disabled">
-                      <span class="page-link">Previous</span>
-                    </li>
-                    <li class="page-item">
-                      <span class="page-link">
-                        1<span class="sr-only">(current)</span>
-                      </span>
-                    </li>
-                    <li class="page-item active">
-                      <span class="page-link ">
-                        {currPage}
-                        <span class="sr-only">(current)</span>
-                      </span>
-                    </li>
-                    <li class="page-item">
-                      <span class="page-link">
-                        3<span class="sr-only">(current)</span>
-                      </span>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link" href=" ">
-                        Next
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
             </div>
+          </div>
+          <div className="row justify-content-center">
+            <ul className="pagination">
+              <li
+                className={page - 1 === 0 ? "page-item disabled" : "page-item "}
+                onClick={() =>
+                  setPage((prev) => {
+                    if (prev - 1 <= 0) {
+                      return 1;
+                    }
+                    return prev - 1;
+                  })
+                }
+              >
+                <span className="page-link">Previous</span>
+              </li>
+              {showPagination()}
+              <li
+                className="page-item"
+                onClick={() => {
+                  setPage((prev) => {
+                    if (prev + 1 > products.total_page) {
+                      return prev;
+                    }
+                    return prev + 1;
+                  });
+                }}
+              >
+                <span className="page-link">Next</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

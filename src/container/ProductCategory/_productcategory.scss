@@ -224,6 +224,39 @@
       }
     }
   }
+
+  .breadcrumb {
+    display: block;
+    text-align: center;
+    background: transparent;
+    font-size: 1.6rem;
+
+    li {
+      display: inline;
+      a {
+        color: $black;
+        &:hover {
+          color: #fab136;
+        }
+      }
+      span {
+        margin: 0 4px;
+      }
+    }
+
+    li:nth-child(2) {
+      text-transform: uppercase;
+    }
+
+    .last {
+      display: block;
+      span {
+        font-size: 2rem;
+        text-transform: uppercase;
+        color: #fab136;
+      }
+    }
+  }
 }
 
 .product-category {
@@ -231,6 +264,19 @@
     .col-lg-9 {
       .col-lg-3 {
         max-width: 25% !important;
+      }
+    }
+  }
+}
+
+.product-category {
+  .row {
+    .pagination {
+      margin: 10px;
+      .page-item {
+        span {
+          font-size: 1.4rem;
+        }
       }
     }
   }

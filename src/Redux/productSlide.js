@@ -11,7 +11,8 @@ const productSlice = createSlice({
     },
     sortProduct: (state, action) => {
       const type = action.payload;
-      const newProduct = [...state.products];
+      const newProduct = [...state.products.products];
+      console.log(newProduct);
       switch (type) {
         case "Tên A-Z":
           newProduct.sort((a, b) => {

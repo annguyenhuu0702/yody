@@ -2,7 +2,7 @@ import axios from "axios";
 import { URL } from "../constants";
 import { getAllProduct } from "../Redux/productSlide";
 
-export const apiGetAllProduct = async (dispatch, limit) => {
+export const apiGetAllProduct = async (dispatch) => {
   try {
     const res = await axios.get(`${URL}/v1/product`);
     dispatch(getAllProduct(res.data));
@@ -26,19 +26,25 @@ export const apiGetAllProductByGenderCategorySlug = async (
   }
 };
 
-export const apiGetAllProductByCategorySlug = async (dispatch, slug) => {
+export const apiGetAllProductByCategorySlug = async (dispatch, slug, limit) => {
   try {
-    const res = await axios.get(`${URL}/v1/product/category-slug/${slug}`);
+    const res = await axios.get(
+      `${URL}/v1/product/category-slug/${slug}${limit}`
+    );
     dispatch(getAllProduct(res.data));
   } catch (err) {
     console.log(err);
   }
 };
 
-export const apiGetAllProductByGroupCategorySlug = async (dispatch, slug) => {
+export const apiGetAllProductByGroupCategorySlug = async (
+  dispatch,
+  slug,
+  limit
+) => {
   try {
     const res = await axios.get(
-      `${URL}/v1/product/group-category-slug/${slug}`
+      `${URL}/v1/product/group-category-slug/${slug}${limit}`
     );
     dispatch(getAllProduct(res.data));
   } catch (err) {

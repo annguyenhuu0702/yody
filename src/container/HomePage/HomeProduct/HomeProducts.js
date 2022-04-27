@@ -69,7 +69,7 @@ const HomeProducts = () => {
                   getAllProduct();
                 }}
               >
-                Tất cả
+                Bán chạy nhất
               </li>
               {genderCategory.map((item, index) => {
                 return (

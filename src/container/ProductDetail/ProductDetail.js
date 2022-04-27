@@ -29,13 +29,6 @@ const ProductDetail = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIndexImage(0);
-    return () => {
-      setState({});
-    };
-  }, [indexColor]);
-
-  useEffect(() => {
     const api = async () => {
       const data = await apiProductBySlug(params.productDetail);
       setProduct(data);
@@ -45,8 +38,6 @@ const ProductDetail = () => {
       setState({});
     };
   }, [params.productDetail]);
-
-  console.log(product);
 
   useEffect(() => {
     // tìm sizeID trong giỏ hàng
@@ -125,27 +116,31 @@ const ProductDetail = () => {
             <div className="row">
               <div className="col-lg-7 left">
                 <div className="product-detail-img">
-                  <div className="small-wrap">
-                    {product.product_colors[
-                      indexColor
-                    ].product_color_images.map((item, index) => {
-                      return (
-                        <div
-                          key={index}
-                          className={
-                            indexImage === index
-                              ? "small-img active"
-                              : "small-img"
-                          }
-                          onClick={() => {
-                            setIndexImage(index);
-                          }}
-                        >
-                          <img src={`${item.url}`} alt="" />
-                        </div>
-                      );
-                    })}
-                  </div>
+                  {product?.product_colors[indexColor]?.product_color_images
+                    .length > 1 && (
+                    <div className="small-wrap">
+                      {product.product_colors[
+                        indexColor
+                      ].product_color_images.map((item, index) => {
+                        return (
+                          <div
+                            key={index}
+                            className={
+                              indexImage === index
+                                ? "small-img active"
+                                : "small-img"
+                            }
+                            onClick={() => {
+                              setIndexImage(index);
+                            }}
+                          >
+                            <img src={`${item.url}`} alt="" />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
                   <div className="large-img">
                     <img
                       src={`${product.product_colors[indexColor].product_color_images[indexImage].url}`}
@@ -179,6 +174,7 @@ const ProductDetail = () => {
                                 : "img-wrap"
                             }
                             onClick={() => {
+                              setIndexImage(0);
                               setIndexColor(index);
                             }}
                           >
@@ -192,7 +188,7 @@ const ProductDetail = () => {
                     </div>
                   </div>
                   {product.product_colors[indexColor].product_color_sizes
-                    .length > 0 ? (
+                    .length > 1 ? (
                     <div className="info size">
                       <div className="text-size">
                         Kích thước:{" "}
