@@ -6,9 +6,9 @@ const productSlice = createSlice({
     products: [],
   },
   reducers: {
-    getAllProduct: (state, action) => {
-      state.products = action.payload;
-    },
+    // getAllProduct: (state, action) => {
+    //   state.products = action.payload;
+    // },
     sortProduct: (state, action) => {
       const type = action.payload;
       const newProduct = [...state.products.products];

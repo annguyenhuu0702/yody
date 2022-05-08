@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import {
   apiGetAllProduct,
   apiGetAllProductByCategorySlug,
@@ -12,8 +17,10 @@ import { sortProduct } from "../../Redux/productSlide";
 import "./_productcategory.scss";
 
 const ProductCategory = ({ groupCategory, category }) => {
+  const [products, setProducts] = useState();
   const [queryParams] = useSearchParams();
   const p = queryParams.get("p");
+
   const [visible, setVisible] = useState(8);
   const [pagination, setPagination] = useState(4);
   const [sort, setSort] = useState("Mặc định");
@@ -36,7 +43,7 @@ const ProductCategory = ({ groupCategory, category }) => {
 
   const dispatch = useDispatch();
 
-  const products = useSelector((state) => state.product?.products);
+  const location = useLocation();
 
   const [toogle, setToogle] = useState({
     color: false,
@@ -146,23 +153,6 @@ const ProductCategory = ({ groupCategory, category }) => {
   const slug = groupCategory ? groupCategory?.slug : category?.slug;
 
   // sản phẩm theo category slug, group category slug
-  useEffect(() => {
-    if (!groupCategory) {
-      apiGetAllProductByCategorySlug(
-        dispatch,
-        slug,
-        `?limit=${pagination}&p=${page}`
-      );
-    } else if (!category) {
-      apiGetAllProductByGroupCategorySlug(
-        dispatch,
-        slug,
-        `?limit=${pagination}&p=${page}`
-      );
-    } else {
-      apiGetAllProduct(dispatch);
-    }
-  }, [category, dispatch, groupCategory, page, pagination, slug]);
 
   // sort product
   const handleSort = (sort) => {
@@ -234,17 +224,49 @@ const ProductCategory = ({ groupCategory, category }) => {
   };
 
   useEffect(() => {
+    const callAPi = async () => {
+      if (category) {
+        const data = await apiGetAllProductByCategorySlug(
+          slug,
+          `?limit=${pagination}&p=${page}&pSize=true&pImage=true`
+        );
+        setProducts(data);
+      } else if (groupCategory) {
+        const data = await apiGetAllProductByGroupCategorySlug(
+          slug,
+          `?limit=${pagination}&p=${page}&pSize=true&pImage=true`
+        );
+        setProducts(data);
+      } else {
+        const data = await apiGetAllProduct(
+          `?limit=${pagination}&p=${page}&pSize=true&pImage=true`
+        );
+        setProducts(data);
+      }
+    };
+    callAPi();
+  }, [category, dispatch, groupCategory, page, pagination, slug]);
+
+  useEffect(() => {
     let url = "";
     let urlSearchParams = {};
-    urlSearchParams.p = page;
+    if (page > 1) {
+      urlSearchParams.p = page;
+    }
+    if (p === 0) {
+      delete urlSearchParams.p;
+    }
     url = new URLSearchParams(urlSearchParams).toString();
     if (!window.location.href.endsWith(url)) navigate("?" + url);
-  }, [navigate, page]);
+    else if (!window.location.href.endsWith(location.pathname) && url === "") {
+      navigate(location.pathname);
+    }
+  }, [location.pathname, navigate, p, page]);
 
   const showPagination = () => {
     let arr = [];
     for (let i = page; i < page + 3; i++) {
-      if (page + 2 < products.total_page) {
+      if (page + 2 < products?.total_page) {
         arr.push(
           <li
             key={Math.random()}
@@ -274,32 +296,36 @@ const ProductCategory = ({ groupCategory, category }) => {
         <div className="container">
           <div className="row">
             <div className="col-12">
-              <ul className="breadcrumb">
-                <li>
-                  <Link to="/">Trang chủ</Link>
-                  <span>/</span>
-                </li>
-                <li>
-                  <Link
-                    to={
-                      groupCategory
-                        ? `/${groupCategory.gender_category.slug}`
-                        : `/${category.group_category.slug}`
-                    }
-                  >
-                    {groupCategory
-                      ? groupCategory.gender_category.short_name
-                      : category.group_category.full_name}
-                  </Link>
-                </li>
-                <li className="last">
-                  <span>
-                    {groupCategory
-                      ? groupCategory.full_name
-                      : category.full_name}
-                  </span>
-                </li>
-              </ul>
+              {groupCategory || category ? (
+                <ul className="breadcrumb">
+                  <li>
+                    <Link to="/">Trang chủ</Link>
+                    <span>/</span>
+                  </li>
+                  <li>
+                    <Link
+                      to={
+                        groupCategory
+                          ? `/${groupCategory.gender_category.slug}`
+                          : `/${category.group_category.slug}`
+                      }
+                    >
+                      {groupCategory
+                        ? groupCategory.gender_category.short_name
+                        : category.group_category.full_name}
+                    </Link>
+                  </li>
+                  <li className="last">
+                    <span>
+                      {groupCategory
+                        ? groupCategory.full_name
+                        : category.full_name}
+                    </span>
+                  </li>
+                </ul>
+              ) : (
+                ""
+              )}
             </div>
           </div>
           <div className="row">

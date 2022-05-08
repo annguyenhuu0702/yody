@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
-import BackToTop from "./Components/BackToTop/BackToTop";
 import Footer from "./Components/Footer/Footer";
 import Header from "./Components/Header/Header";
 import ScrollTop from "./Components/ScrollTop/ScrollTop";
@@ -14,7 +13,7 @@ const App = () => {
       <ScrollTop />
       {PageRoutes()}
       <Footer />
-      <BackToTop />
+      {/* <BackToTop /> */}
       <ToastMessage />
     </BrowserRouter>
   );

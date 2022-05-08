@@ -1,62 +1,57 @@
 import axios from "axios";
 import { URL } from "../constants";
-import { getAllProduct } from "../Redux/productSlide";
 
-export const apiGetAllProduct = async (dispatch) => {
+export const apiGetAllProduct = async (query) => {
   try {
-    const res = await axios.get(`${URL}/v1/product`);
-    dispatch(getAllProduct(res.data));
+    const res = await axios.get(`${URL}/v1/product${query}`);
+    return res.data;
   } catch (err) {
     console.log(err);
+    return null;
   }
 };
 
-export const apiGetAllProductByGenderCategorySlug = async (
-  dispatch,
-  slug,
-  limit
-) => {
+export const apiGetAllProductByGenderCategorySlug = async (slug, limit) => {
   try {
     const res = await axios.get(
       `${URL}/v1/product/gender-category-slug/${slug}${limit}`
     );
-    dispatch(getAllProduct(res.data));
+    return res.data;
   } catch (err) {
-    console.log(err);
+    return null;
   }
 };
 
-export const apiGetAllProductByCategorySlug = async (dispatch, slug, limit) => {
+export const apiGetAllProductByCategorySlug = async (slug, limit) => {
   try {
     const res = await axios.get(
       `${URL}/v1/product/category-slug/${slug}${limit}`
     );
-    dispatch(getAllProduct(res.data));
+    return res.data;
   } catch (err) {
-    console.log(err);
+    return null;
   }
 };
 
-export const apiGetAllProductByGroupCategorySlug = async (
-  dispatch,
-  slug,
-  limit
-) => {
+export const apiGetAllProductByGroupCategorySlug = async (slug, limit) => {
   try {
     const res = await axios.get(
       `${URL}/v1/product/group-category-slug/${slug}${limit}`
     );
-    dispatch(getAllProduct(res.data));
+    return res.data;
   } catch (err) {
-    console.log(err);
+    return null;
   }
 };
 
 export const apiProductBySlug = async (slug) => {
   try {
-    const res = await axios.get(`${URL}/v1/product/slug/${slug}`);
+    const res = await axios.get(
+      `${URL}/v1/product/slug/${slug}?pSize=true&pImage=true`
+    );
     return res.data;
   } catch (err) {
     console.log(err);
+    return null;
   }
 };

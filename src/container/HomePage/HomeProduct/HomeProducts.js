@@ -1,43 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  apiGetAllProduct,
-  apiGetAllProductByGenderCategorySlug,
-} from "../../../api/apiProduct";
+import { useSelector } from "react-redux";
+import { apiGetAllProductByGenderCategorySlug } from "../../../api/apiProduct";
 import Products from "../../../Components/Products/Products";
 import "./_homeproduct.scss";
 
 const HomeProducts = () => {
   const [idxCategory, setInxCategory] = useState(0);
   const [visible, setVisible] = useState(5);
+  const [products, setProducts] = useState();
 
-  const dispatch = useDispatch();
-
-  const products = useSelector((state) => state.product.products);
   const genderCategory = useSelector(
     (state) => state.genderCategory.genderCategory
   );
 
-  useEffect(() => {
-    const sortByCategory = async () => {
-      await apiGetAllProduct(dispatch);
-    };
-    sortByCategory();
-  }, [dispatch]);
-
   const getProductsByGenderCategory = async (item, index) => {
-    await apiGetAllProductByGenderCategorySlug(
-      dispatch,
+    const data = await apiGetAllProductByGenderCategorySlug(
       item.slug,
-      `?limit=${visible}`
+      `?limit=${visible}&pSize=true&pImage=true`
     );
+    setProducts(data);
     setInxCategory(index + 1);
     setVisible(5);
-  };
-
-  const getAllProduct = async () => {
-    await apiGetAllProduct(dispatch);
-    setInxCategory(0);
   };
 
   //load more product theo gendercategory
@@ -46,15 +29,15 @@ const HomeProducts = () => {
       if (idxCategory === 0) {
         //
       } else {
-        await apiGetAllProductByGenderCategorySlug(
-          dispatch,
+        const data = await apiGetAllProductByGenderCategorySlug(
           genderCategory[idxCategory - 1].slug,
-          `?limit=${visible}`
+          `?limit=${visible}&pSize=true&pImage=true`
         );
+        setProducts(data);
       }
     };
     callApi();
-  }, [dispatch, genderCategory, idxCategory, visible]);
+  }, [genderCategory, idxCategory, visible]);
 
   return (
     <section className="home-product">
@@ -65,9 +48,6 @@ const HomeProducts = () => {
             <ul className="title-list">
               <li
                 className={`item ${0 === idxCategory ? "item-active" : "item"}`}
-                onClick={() => {
-                  getAllProduct();
-                }}
               >
                 Bán chạy nhất
               </li>
@@ -95,8 +75,8 @@ const HomeProducts = () => {
       <div className="product">
         <Products products={products} />
       </div>
-      {products.total_page * products.length !== 5 &&
-        (products.total_page !== 1 ? (
+      {products?.total_page * products?.length !== 5 &&
+        (products?.total_page !== 1 ? (
           <div className="load-more">
             <button onClick={() => setVisible(visible + 5)}>Xem thêm</button>
           </div>

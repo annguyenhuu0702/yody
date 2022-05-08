@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./_footer.scss";
 const Footer = () => {
   const social = [
@@ -10,9 +10,40 @@ const Footer = () => {
     "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/social_6.png?1646731994406",
     "https://bizweb.dktcdn.net/100/438/408/themes/848101/assets/social_7.png?1646731994406",
   ];
+
+  const [btnBackToTop, setBtnBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 500) {
+        setBtnBackToTop(true);
+      } else {
+        setBtnBackToTop(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  const scrollUp = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
   return (
     <footer className="sec-footer">
       <div className="container pl-0">
+        <>
+          {btnBackToTop && (
+            <button className="button__scroll" onClick={scrollUp}>
+              <i className="fa-solid fa-arrow-up-long"></i>
+            </button>
+          )}
+        </>
         <div className="row footer-top">
           <div className="col-lg-4 footer-item">
             <p className="text">

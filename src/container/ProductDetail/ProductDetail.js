@@ -14,9 +14,7 @@ const ProductDetail = () => {
   const [indexColor, setIndexColor] = useState(0);
   const [indexImage, setIndexImage] = useState(0);
   const [indexSize, setIndexSize] = useState(0);
-
   const [qtt, setQtt] = useState(1);
-
   const [product, setProduct] = useState();
 
   const dispatch = useDispatch();
@@ -27,6 +25,8 @@ const ProductDetail = () => {
   const params = useParams();
 
   const navigate = useNavigate();
+
+  console.log(product);
 
   useEffect(() => {
     const api = async () => {
@@ -72,20 +72,21 @@ const ProductDetail = () => {
   const handleQtt = () => {};
 
   const addToCart = (data) => {
-    // apiAddToCart(user, dispatch, data);
-    const checkCart = carts.find(
-      (item) =>
-        item.product_color_size_id ===
-        product.product_colors[indexColor].product_color_sizes[indexSize].id
-    );
-    const currentQtt = checkCart ? checkCart.quantity : 0;
-    if (
-      data.quantity + currentQtt <=
-      product.product_colors[indexColor].product_color_sizes[indexSize].amount
-    ) {
-      apiAddToCart(user, dispatch, data);
-    } else {
-      dispatch(showMessage("Số lượng tồn không đủ!"));
+    if (user) {
+      const checkCart = carts.find(
+        (item) =>
+          item.product_color_size_id ===
+          product.product_colors[indexColor].product_color_sizes[indexSize].id
+      );
+      const currentQtt = checkCart ? checkCart.quantity : 0;
+      if (
+        data.quantity + currentQtt <=
+        product.product_colors[indexColor].product_color_sizes[indexSize].amount
+      ) {
+        apiAddToCart(user, dispatch, data);
+      } else {
+        dispatch(showMessage("Số lượng tồn không đủ!"));
+      }
     }
   };
 

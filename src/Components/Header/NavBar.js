@@ -110,14 +110,14 @@ const NavBar = () => {
                           className="category-item col-lg-2"
                           key={group.slug}
                         >
-                          <Link to={`/${group.slug}`} className="title">
+                          <Link to={`/${group.slug}?p=0`} className="title">
                             {group.short_name}
                           </Link>
                           <div className="item">
                             {group.categories.map((category) => {
                               return (
                                 <Link
-                                  to={`/${category.slug}`}
+                                  to={`/${category.slug}?p=0`}
                                   key={category.slug}
                                 >
                                   {category.short_name}
