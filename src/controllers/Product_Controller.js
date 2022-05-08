@@ -14,7 +14,7 @@ const {
 
 const Product_Controller = {
   getAll: async (req, res) => {
-    const { status, data } = await getAll();
+    const { status, data } = await getAll(req.query);
     res.status(status).json(data);
   },
   getByStatistics: async (req, res) => {
@@ -47,7 +47,10 @@ const Product_Controller = {
     res.status(status).json(data);
   },
   getBySlug: async (req, res) => {
-    const { status, data } = await getBySlug(req.params.product_slug);
+    const { status, data } = await getBySlug(
+      req.query,
+      req.params.product_slug
+    );
     res.status(status).json(data);
   },
   getByCollectionId: async (req, res) => {

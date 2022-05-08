@@ -1,35 +1,18 @@
 const db = require("../models");
 const slugify = require("slugify");
 // const client = require("../config/configElasticSearch");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 const limitProduct = 5;
 const common_include = {
   attributes: { exclude: ["category_id"] },
   raw: false,
+  order: [[db.Sequelize.col("id"), "desc"]],
   include: [
     {
       model: db.Product_Color,
       as: "product_colors",
-      attributes: { exclude: ["product_id", "createdAt", "updatedAt"] },
+      attributes: { exclude: ["product_id"] },
       required: true,
-      include: [
-        {
-          model: db.Product_Color_Size,
-          as: "product_color_sizes",
-          attributes: {
-            exclude: ["product_color_id", "createdAt", "updatedAt"],
-          },
-          required: true,
-        },
-        {
-          model: db.Product_Color_Image,
-          as: "product_color_images",
-          attributes: {
-            exclude: ["product_color_id", "createdAt", "updatedAt"],
-          },
-          required: true,
-        },
-      ],
     },
     {
       model: db.Category,
@@ -41,7 +24,7 @@ const common_include = {
           model: db.Group_Category,
           as: "group_category",
           attributes: {
-            exclude: ["gender_category_id", "createdAt", "updatedAt"],
+            exclude: ["gender_category_id"],
           },
           include: [
             {
@@ -57,22 +40,10 @@ const common_include = {
         },
       ],
     },
-    {
-      model: db.Comment,
-      as: "comments",
-      attributes: {
-        exclude: ["product_id"],
-      },
-      include: [
-        {
-          model: db.User,
-          as: "user",
-          attributes: {
-            exclude: ["createdAt", "updatedAt"],
-          },
-        },
-      ],
-    },
+    // {
+    //   model: db.Product_Sale,
+    //   as: "product_sales",
+    // },
   ],
   nest: true,
 };
@@ -106,51 +77,223 @@ const countProduct = async (where) => {
   return total;
 };
 const createFilter = (query) => {
-  let { color, size, price, sortBy, sortType, p } = query;
-  let newInclude = { ...common_include };
+  let {
+    color,
+    size,
+    price,
+    sortBy,
+    sortType,
+    pImage,
+    p,
+    limit,
+    pSize,
+    pComment,
+  } = query;
   color = color ? JSON.parse(color) : [];
   size = size ? JSON.parse(size) : [];
   price = price ? JSON.parse(price) : [];
-  if (color.length !== 0 || size.length !== 0 || price.length !== 0) {
-    newInclude.where = {
-      [Op.or]: [
-        {
-          "$Product_Colors.color$": {
-            [Op.in]: color,
+  let product_color_include = {
+    model: db.Product_Color,
+    as: "product_colors",
+    attributes: { exclude: ["product_id"] },
+    required: true,
+    include: [],
+  };
+  let product_color_size_include = {
+    model: db.Product_Color_Size,
+    as: "product_color_sizes",
+    attributes: {
+      exclude: ["product_color_id"],
+    },
+    required: true,
+  };
+  let comment_include = {
+    model: db.Comment,
+    as: "comments",
+    include: [
+      {
+        model: db.User,
+        as: "user",
+      },
+      {
+        model: db.Product,
+        as: "product",
+      },
+      {
+        model: db.Replied_Comment,
+        as: "replied_comments",
+        include: [
+          {
+            model: db.User,
+            as: "user",
           },
-        },
-        {
-          "$Product_Colors.Product_Color_Sizes.size_text$": {
-            [Op.in]: size,
-          },
-        },
-        {
-          price: {
-            [Op.gte]: price[0],
-            [Op.lte]: price[1],
-          },
-        },
-      ],
+        ],
+      },
+    ],
+    limit: 1,
+    separate: true,
+    order: [["createdAt", "asc"]],
+  };
+  // Nếu có filter color thì thêm điều kiện where vào
+  if (color.length !== 0) {
+    product_color_include.where = {
+      color: {
+        [Op.in]: color,
+      },
     };
   }
-  if (sortBy && sortType && sortBy !== "") {
-    newInclude.order = [[sortBy, sortType.toUpperCase()]];
-  } else {
-    delete newInclude.order;
+  // Nếu cần dữ liệu image thì phải có query param là pImage
+  if (pImage) {
+    product_color_include.include.push({
+      model: db.Product_Color_Image,
+      as: "product_color_images",
+      attributes: {
+        exclude: ["product_color_id"],
+      },
+      required: true,
+    });
   }
+  // Nếu filter size thì cần phải cho pSize bằng true để lấy dữ liệu size
+  if (size.length !== 0) {
+    pSize = true;
+  }
+  // Nếu có query param là pSize thì lấy dữ liệu size
+  if (pSize) {
+    // Nếu có filter size thì thêm điều kiện where vào
+    if (size.length !== 0) {
+      product_color_size_include.where = {
+        size_text: {
+          [Op.in]: size,
+        },
+      };
+      product_color_size_include.attributes = [];
+    }
 
+    product_color_include.include.push(product_color_size_include);
+  }
+  let newInclude = {
+    attributes: { exclude: ["category_id"] },
+    raw: false,
+    order: [[db.Sequelize.col("id"), "asc"]],
+    // logging: console.log,
+    include: [
+      { ...product_color_include },
+      {
+        model: db.Category,
+        as: "category",
+        required: true,
+        attributes: { exclude: ["group_category_id"] },
+        attributes: ["id", "slug"],
+        include: [
+          {
+            model: db.Group_Category,
+            as: "group_category",
+            attributes: {
+              exclude: ["gender_category_id"],
+            },
+            attributes: ["id", "slug"],
+            include: [
+              {
+                model: db.Gender_Category,
+                as: "gender_category",
+                attributes: {
+                  exclude: ["createdAt", "updatedAt"],
+                },
+                required: true,
+              },
+            ],
+            required: true,
+          },
+        ],
+      },
+      // {
+      //   model: db.Product_Sale,
+      //   as: "product_sales",
+      // },
+    ],
+    nest: true,
+  };
+  // Nếu cần dữ liệu comment thì truyền query param là pComment
+  if (pComment) {
+    newInclude.include.push(comment_include);
+    // newInclude.order = [
+    //   ...newInclude.order,
+    //   [{ model: db.Comment, as: "comments" }, "createdAt", "asc"],
+    // ];
+  }
+  // Nếu có filter price thì thêm where vào
+  if (price.length !== 0) {
+    newInclude.where = {
+      price: {
+        [Op.gte]: price[0],
+        [Op.lte]: price[1],
+      },
+    };
+  }
+  // Nếu sort thì thêm order vào
+  if (sortBy && sortType && sortBy !== "") {
+    newInclude.order = [...newInclude.order, [sortBy, sortType.toUpperCase()]];
+  }
   return newInclude;
 };
-const getAll = async () => {
+const getAll = async (query) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const products = await db.Product.findAll(common_include);
+      const { p, limit } = query;
+      let _limit;
+      if (typeof limit !== typeof 3) {
+        _limit = limit ? parseInt(limit) : limitProduct;
+      } else {
+        _limit = limit ? limit : limitProduct;
+      }
+      let products = [];
+      let total;
+      let _p = parseInt(p);
+      if (_p <= 0) {
+        products = [];
+        total = 0;
+      } else {
+        total = await countProduct();
+        const newInclude = createFilter(query);
+        products = await db.Product.findAll({
+          ...newInclude,
+          limit: _limit,
+          offset: _limit * ((!_p ? 1 : _p) - 1),
+        });
+      }
+
+      // if (products.length > 0) {
+      //   for (let i = 0; i < products.length; i++) {
+      //     try {
+      //       await client.update({
+      //         index: "products",
+      //         id: products[i].id,
+      //         doc: products[i],
+      //       });
+      //     } catch (error) {
+      //       await client.index({
+      //         index: "products",
+      //         id: products[i].id,
+      //         document: products[i],
+      //       });
+      //     }
+      //   }
+      // }
+
       resolve({
         status: 200,
-        data: products,
+        data: {
+          products: products,
+          total_page: Math.ceil(total / _limit),
+        },
       });
     } catch (error) {
       console.log(error);
+      // await client.index({
+      //   index: "products",
+      //   id: products[0].id,
+      //   document: products[0],
+      // });
       resolve({ status: 500, data: error });
     }
   });
@@ -159,52 +302,58 @@ const getAll = async () => {
 const getByStatistics = async (user, query) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const products = await db.Product.findAll({
+      const { limit } = query;
+      const optionCount = {
+        group: "product_color_size.product_color.product.id",
+        order: [[db.sequelize.fn("sum", db.sequelize.col("quantity")), "asc"]],
         include: [
           {
-            model: db.Product_Color,
-            as: "product_colors",
+            model: db.Product_Color_Size,
+            as: "product_color_size",
+            attributes: ["id"],
             include: [
               {
-                model: db.Product_Color_Size,
-                as: "product_color_sizes",
+                model: db.Product_Color,
+                as: "product_color",
+                attributes: ["id"],
                 include: [
                   {
-                    model: db.Order_Item,
-                    as: "order_items",
+                    model: db.Product,
+                    as: "product",
+                    include: [
+                      {
+                        model: db.Product_Color,
+                        as: "product_colors",
+                        separate: true,
+                      },
+                    ],
                   },
                 ],
               },
-              {
-                model: db.Product_Color_Image,
-                as: "product_color_images",
-              },
             ],
           },
-          {
-            model: db.Product_User,
-            as: "product_users",
-          },
         ],
-        group: "product.id",
-        order: [
-          [
-            db.sequelize.fn(
-              "sum",
-              db.sequelize.col(
-                "product_colors.product_color_sizes.order_items.quantity"
-              )
-            ),
-            "DESC",
-          ],
-        ],
-        where: {
-          "$product_colors.product_color_sizes.order_items.id$": {
-            [Op.not]: null,
-          },
+      };
+      const arrCount = await db.Order_Item.count(optionCount);
+      let _limit;
+      if (typeof limit !== typeof 3) {
+        _limit = limit ? parseInt(limit) : 1;
+      } else {
+        _limit = limit ? limit : 1;
+      }
+      const products = await db.Order_Item.findAll({
+        ...optionCount,
+        limit: _limit,
+      });
+      resolve({
+        status: 200,
+        data: {
+          products: products.map(
+            (item) => item.product_color_size.product_color.product
+          ),
+          total_page: Math.ceil(arrCount.length / _limit),
         },
       });
-      resolve({ status: 200, data: products });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error });
@@ -222,20 +371,17 @@ const search = async (query) => {
       } else {
         _limit = limit ? limit : limitProduct;
       }
-      const result = await client.search({
-        index: "products",
-        query: {
-          multi_match: {
-            query: q,
-            fields: [
-              "name",
-              "product_colors.color",
-              "product_colors.product_color_sizes.size_text",
-            ],
-          },
-        },
-        size: _limit,
-      });
+      // const result = await client.search({
+      //   index: "products",
+      //   query: {
+      //     multi_match: {
+      //       query: q,
+      //       type: "phrase_prefix",
+      //       fields: ["name", "slug", "product_colors.color"],
+      //     },
+      //   },
+      //   size: _limit,
+      // });
       resolve({
         status: 200,
         data: {
@@ -253,7 +399,6 @@ const getByGenderCategorySlug = async (query, slug) => {
   return new Promise(async (resolve, reject) => {
     try {
       const { p, limit } = query;
-      console.log(query);
       const where = {
         "$Category.Group_Category.Gender_Category.slug$": slug,
       };
@@ -263,15 +408,24 @@ const getByGenderCategorySlug = async (query, slug) => {
       } else {
         _limit = limit ? limit : limitProduct;
       }
-      common_include.where = where;
       let products = [];
       let total = await countProduct(where);
-      products = await db.Product.findAll({
-        ...createFilter(query),
-        limit: _limit,
-        offset: _limit * ((!p ? 1 : p) - 1),
-      });
-      delete common_include.where;
+      if (p <= 0) {
+        products = [];
+        total = 0;
+      } else {
+        total = await countProduct(where);
+        const newInclude = createFilter(query);
+        products = await db.Product.findAll({
+          ...newInclude,
+          where: {
+            ...newInclude.where,
+            ...where,
+          },
+          limit: _limit,
+          offset: _limit * ((!p ? 1 : p) - 1),
+        });
+      }
       resolve({
         status: 200,
         data: {
@@ -298,15 +452,25 @@ const getByGroupCategorySlug = async (query, slug) => {
       } else {
         _limit = limit ? limit : limitProduct;
       }
-      common_include.where = where;
       let products = [];
-      let total = await countProduct(where);
-      products = await db.Product.findAll({
-        ...createFilter(query),
-        limit: _limit,
-        offset: _limit * ((!p ? 1 : p) - 1),
-      });
-      delete common_include.where;
+      let total;
+      let _p = parseInt(p);
+      if (_p <= 0) {
+        products = [];
+        total = 0;
+      } else {
+        total = await countProduct(where);
+        const newInclude = createFilter(query);
+        products = await db.Product.findAll({
+          ...newInclude,
+          where: {
+            ...where,
+            ...newInclude.where,
+          },
+          limit: _limit,
+          offset: _limit * ((!_p ? 1 : _p) - 1),
+        });
+      }
       resolve({
         status: 200,
         data: {
@@ -315,7 +479,7 @@ const getByGroupCategorySlug = async (query, slug) => {
         },
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       resolve({ status: 500, data: error });
     }
   });
@@ -361,15 +525,24 @@ const getByCategorySlug = async (query, slug) => {
       } else {
         _limit = limit ? limit : limitProduct;
       }
-      common_include.where = where;
       let products = [];
       let total = await countProduct(where);
-      products = await db.Product.findAll({
-        ...createFilter(query),
-        limit: _limit,
-        offset: _limit * ((!p ? 1 : p) - 1),
-      });
-      delete common_include.where;
+      if (p <= 0) {
+        products = [];
+        total = 0;
+      } else {
+        total = await countProduct(where);
+        const newInclude = createFilter(query);
+        products = await db.Product.findAll({
+          ...newInclude,
+          where: {
+            ...newInclude.where,
+            ...where,
+          },
+          limit: _limit,
+          offset: _limit * ((!p ? 1 : p) - 1),
+        });
+      }
       resolve({
         status: 200,
         data: {
@@ -383,48 +556,47 @@ const getByCategorySlug = async (query, slug) => {
     }
   });
 };
-
-const getBySlug = async (slug) => {
+const getBySlug = async (query, slug) => {
   return new Promise(async (resolve, reject) => {
     try {
       const product = await db.Product.findOne({
-        raw: false,
-        include: [
-          {
-            model: db.Product_Color,
-            as: "product_colors",
-            include: [
-              { model: db.Product_Color_Size, as: "product_color_sizes" },
-              {
-                model: db.Product_Color_Image,
-                as: "product_color_images",
-              },
-            ],
-          },
-          {
-            model: db.Category,
-            as: "category",
-            include: [
-              {
-                model: db.Group_Category,
-                as: "group_category",
-                include: [{ model: db.Gender_Category, as: "gender_category" }],
-              },
-            ],
-          },
-          {
-            model: db.Comment,
-            as: "comments",
-            include: [{ model: db.User, as: "user" }],
-          },
-        ],
-        nest: true,
+        ...createFilter(query),
         where: { slug },
       });
+
       resolve({ status: 200, data: product });
     } catch (error) {
       console.log(error);
       resolve({ status: 500, data: error.response.data });
+    }
+  });
+};
+const updateIndex = async (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const product = await db.Product.findOne({
+        ...createFilter({}),
+        where: { id },
+      });
+
+      // try {
+      //   await client.update({
+      //     index: "products",
+      //     id: id,
+      //     doc: product,
+      //   });
+      // } catch (error) {
+      //   await client.index({
+      //     index: "products",
+      //     id: id,
+      //     document: product,
+      //   });
+      // }
+
+      resolve({ status: 200, data: product });
+    } catch (error) {
+      console.log(error);
+      resolve({ status: 500, data: error });
     }
   });
 };
@@ -462,11 +634,11 @@ const update = async (body) => {
           slug,
         };
         await db.Product.update(newProduct, { where: { id } });
-        await client.update({
-          index: "products",
-          id: id,
-          doc: { name, price },
-        });
+        // await client.update({
+        //   index: "products",
+        //   id: id,
+        //   doc: { name, price },
+        // });
 
         resolve({ status: 200, data: newProduct });
       }
@@ -491,7 +663,7 @@ const _delete = async (id) => {
           id,
         },
       });
-      await client.delete({ index: "products", id });
+      // await client.delete({ index: "products", id });
       resolve({ status: 200, data: "Deleted" });
     } catch (error) {
       console.log(error);
@@ -512,4 +684,5 @@ module.exports = {
   update,
   _delete,
   getByStatistics,
+  updateIndex,
 };
